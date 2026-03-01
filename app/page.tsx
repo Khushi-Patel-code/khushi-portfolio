@@ -1,23 +1,30 @@
-import Hero from "./sections/Hero"; // Adjust path based on your folder structure
+import Hero from "./sections/Hero"; 
+import Projects from "./sections/Projects"; // Path to your new component
 
 export default function Home() {
   return (
-    /* We use 'dark' class or a dark background to match the Hero's vibe */
-    <div className="bg-[#0a0a0c] min-h-screen selection:bg-indigo-500/30">
-      {/* Optional: Add a simple nav or just let the Hero shine */}
+    /* Global wrapper with the deep-space background and indigo selection */
+    <div className="bg-[#0a0a0c] min-h-screen selection:bg-indigo-500/30 selection:text-indigo-200">
+      
       <main>
+        {/* The Hero Section: Introduction & Identity */}
         <Hero />
         
-        {/* Placeholder for your next section to test scrolling */}
-        <section id="projects" className="min-h-screen bg-[#0a0a0c] flex items-center justify-center border-t border-white/5">
-          <h2 className="text-white/20 text-4xl font-bold tracking-widest uppercase">
-            Project Gallery Coming Soon
-          </h2>
-        </section>
+        {/* Subtle separator glow to lead the eye to projects */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
+        {/* The Projects Section: Featured Works & Innovation */}
+        <Projects />
       </main>
       
-      <footer className="py-10 text-center text-slate-600 text-sm border-t border-white/5 bg-[#0a0a0c]">
-        © {new Date().getFullYear()} — Designed with Intent
+      {/* Footer: Simple, Minimalist, and Disciplined */}
+      <footer className="py-20 text-center bg-[#0a0a0c] border-t border-white/5">
+        <p className="text-slate-500 font-mono text-xs tracking-[0.3em] uppercase mb-4">
+          Built with Resilience & Logic
+        </p>
+        <div className="text-slate-600 text-sm font-light">
+          © {new Date().getFullYear()} KHUSHI PATEL — Designed with Intent
+        </div>
       </footer>
     </div>
   );
