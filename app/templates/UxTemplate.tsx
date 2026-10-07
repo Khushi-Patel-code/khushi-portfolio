@@ -732,15 +732,12 @@ export default function UxTemplate() {
                 className="group block rounded-md border-2 border-ink2 overflow-hidden hover:-translate-y-1 hover:shadow-[8px_8px_0_#ff6b4a] transition-all bg-paper"
               >
                 <div className="aspect-video bg-maroon text-cream flex items-center justify-center overflow-hidden">
-                  {c.video ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={c.video.poster} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  ) : (
-                    <span className="font-display italic text-6xl">Aa</span>
-                  )}
+                  <span className="font-display italic text-6xl md:text-7xl group-hover:scale-105 transition-transform duration-700">
+                    {{ hirezapp: "Hub", "hirezapp-audit": "Audit", "design-research": "Aa" }[c.slug] ?? "Aa"}
+                  </span>
                 </div>
                 <div className="p-5">
-                  <p className="font-display italic text-maroon mb-1">0{i + 1}{c.video ? " / video inside" : ""}</p>
+                  <p className="font-display italic text-maroon mb-1">0{i + 1}</p>
                   <h3 className="font-display text-xl leading-snug mb-2">{c.title}</h3>
                   <p className="text-sm text-ink2/70">{c.short}</p>
                 </div>
