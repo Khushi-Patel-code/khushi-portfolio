@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const stats = [
   { value: "4.06", label: "GPA / 4.30" },
-  { value: "5x", label: "President's List" },
+  { value: "President's List", label: "Ontario Tech" },
   { value: "Top 10", label: "TechNation Canada" },
   { value: "Top 100", label: "FAR AWAY 2026" },
 ];
@@ -52,7 +52,7 @@ export default function About() {
 
             <div className="space-y-5 text-slate-400 text-base md:text-lg leading-relaxed">
               <p>
-                Fourth-year Software Engineering student at Ontario Tech — but what excites me
+                Fourth-year Software Engineering student at Ontario Tech. What excites me
                 isn&apos;t the code itself, it&apos;s what the code makes possible. I figured out
                 early that I come alive at the intersection of design and tech: where a font choice
                 changes how a page <span className="text-slate-200">feels</span>, and a color shift
@@ -67,10 +67,10 @@ export default function About() {
                 tells you everything.
               </p>
               <p>
-                Looking for roles in{" "}
-                <span className="text-indigo-400">UX/UI design</span> and{" "}
-                <span className="text-indigo-400">frontend development</span> where design intent
-                and engineering actually meet.
+                Where I&apos;m headed:{" "}
+                <span className="text-indigo-400">UX and product</span>, working with engineers
+                who care how the thing feels to use. Gaming and media is the space I&apos;m most
+                curious about.
               </p>
             </div>
 
@@ -86,7 +86,7 @@ export default function About() {
                 <GithubIcon /> GitHub
               </a>
               <a
-                href="http://www.linkedin.com/in/khushi-patel-85a994274"
+                href="https://www.linkedin.com/in/khushipatel-dev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors border border-white/10 rounded-full px-4 py-2 hover:border-white/30"
@@ -140,10 +140,11 @@ export default function About() {
                 </span>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Actively seeking internships in{" "}
-                <span className="text-slate-200">UX/UI Design</span>,{" "}
-                <span className="text-slate-200">Frontend Development</span>, and{" "}
-                <span className="text-slate-200">Product Design</span> — Fall 2026.
+                Looking for a co-op or internship from{" "}
+                <span className="text-slate-200">Winter 2027</span>, and Summer 2027 too. Roles in{" "}
+                <span className="text-slate-200">UX/UI</span>,{" "}
+                <span className="text-slate-200">product</span>, and{" "}
+                <span className="text-slate-200">software</span>.
               </p>
             </div>
 
@@ -168,7 +169,7 @@ export default function About() {
                 className="text-slate-500 text-xs mt-1"
                 style={{ fontFamily: "var(--font-dm-mono), monospace" }}
               >
-                GPA 4.06 / 4.30 · Expected June 2027
+                GPA 4.06 / 4.30 · Expected June 2028
               </div>
             </div>
           </motion.div>

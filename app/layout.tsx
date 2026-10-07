@@ -24,10 +24,10 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Khushi Patel — Software Engineer & Designer",
+  title: "Khushi Patel | Software Engineering, UX & Product",
   description:
-    "Portfolio of Khushi Patel — Software Engineering student at Ontario Tech University, specializing in UX/UI design and frontend development.",
-  keywords: ["Software Engineer", "UX Design", "Frontend Developer", "Ontario Tech", "Portfolio"],
+    "Khushi Patel, fourth-year Software Engineering student at Ontario Tech University, working across software, UX, and product.",
+  keywords: ["Software Engineer", "UX Design", "Product", "Frontend Developer", "Ontario Tech", "Portfolio"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

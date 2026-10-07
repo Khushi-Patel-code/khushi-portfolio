@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const experiences = [
   {
@@ -8,13 +9,15 @@ const experiences = [
     roleExtra: "Product, UI/UX & Growth",
     company: "HireZapp · Remote/Hybrid",
     period: "May 2026 – August 2026",
+    caseStudy: "/case-studies/hirezapp",
     type: "Internship",
     typeColor: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30",
     bullets: [
-      "Audited and redesigned UX across the website, implementing layout and frontend changes directly in the codebase based on real user behavior data, following object-oriented design and coding best practices",
+      "Audited 15+ webpages against 20+ competitors, documenting each issue, why it hurt the user, and the fix",
+      "Redesigned the candidate communications hub in Figma, restructuring tabs and navigation; shipped to production after CEO approval",
+      "Implemented layout and frontend changes in the codebase alongside the senior developer and CTO",
       "Researched AI search visibility gaps and implemented structured data (FAQPage schema) in JSON-LD, using AI tools to accelerate testing and debugging",
-      "Led content strategy end to end, from technical blog audits to comparative market research, translating user and business requirements into actionable engineering and content fixes",
-      "Drove reputation and trust-building initiatives across major review platforms, collaborating with engineering to design, build, and ship hands-on product fixes",
+      "Audited 30+ blog posts and wrote competitor comparison content, turning user and business requirements into engineering and content fixes",
     ],
   },
   {
@@ -25,8 +28,7 @@ const experiences = [
     typeColor: "text-violet-400 bg-violet-500/10 border-violet-500/30",
     bullets: [
       "Collaborated on building an event platform using React and Firebase, implementing real-time registration, team formation, and admin dashboard features",
-      "Designed and executed an end-to-end marketing campaign for Startup Rescue Challenge 2026, driving 50+ registrations within 3 weeks through cross-platform content and event branding",
-      "Led visual identity and social media strategy across all digital platforms, owning content calendars and promotional design with 60%+ engagement growth on initial campaign content",
+      "Ran social media and event promotion, designing visuals and reels and using analytics to adjust content; grew Instagram engagement 70% in 2 months and drew 100+ attendees to the flagship mixer",
     ],
   },
   {
@@ -64,9 +66,9 @@ const experiences = [
 ];
 
 const achievements = [
-  "🏆 FAR AWAY 2026 International Hackathon (Zuup) — Top 100 of 11,000+ applicants (July 2026)",
-  "🏆 TECHNATION AI Equity Data Challenge — Top 10 nationally across Canada (Nov 2025)",
-  "⚡ Brilliant Catalyst Energy Innovation Challenge Semi-finalist — Ontario Tech (Winter 2025)",
+  "FAR AWAY 2026 International Hackathon: Top 100 of 11,000+ applicants, invited to the in-person round in Delhi",
+  "TECHNATION AI Equity Data Challenge: Top 10 across Canada (Nov 2025)",
+  "Brilliant Catalyst Energy Innovation Challenge: semi-finalist, Ontario Tech (Winter 2025)",
 ];
 
 export default function Experience() {
@@ -152,6 +154,14 @@ export default function Experience() {
                   </div>
 
                   {/* Bullets */}
+                  {"caseStudy" in exp && exp.caseStudy && (
+                    <Link
+                      href={exp.caseStudy}
+                      className="inline-block mb-4 text-sm text-indigo-400 hover:text-indigo-300"
+                    >
+                      Read the case study →
+                    </Link>
+                  )}
                   <ul className="space-y-2">
                     {exp.bullets.map((bullet, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-slate-400">

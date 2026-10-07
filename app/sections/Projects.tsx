@@ -5,12 +5,23 @@ import { motion } from "framer-motion";
 
 const projects = [
   {
+    title: "Farsight",
+    subtitle: "Multi-Agent Railway Crowd Management",
+    description: "A multi-agent platform that predicts where crowds will build up in railway stations and shows operators what to do about it. Top 100 of 11,000+ applicants at FAR AWAY 2026, invited to the in-person round in Delhi.",
+    highlights: ["Live simulation map", "Prediction timeline", "Agent fleet view for operators", "Alerts and recommendations"],
+    tags: ["react", "typescript", "tailwindcss"],
+    link: "https://github.com/Khushi-Patel-code/Farsight",
+    demo: "https://farsight-fawn.vercel.app",
+    image: "/projects/farsight-dashboard.jpg",
+  },
+  {
     title: "E-Commerce Management System",
     subtitle: "Full-Stack Inventory Orchestration",
     description: "A robust full-stack system for inventory and order orchestration with role-based authentication, inventory management, order processing, analytics, and secure admin controls.",
     highlights: ["JWT Authentication", "Product & Inventory CRUD", "Role-based Access Control", "Dynamic Data Visualization", "Order Processing & Tracking", "Sales Analytics & Reporting" ],
     tags: ["nodedotjs", "mysql","jsonwebtokens", "express", "chartdotjs"],
-    link: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website"
+    link: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
+    image: "/projects/ecom-dashboard.jpg",
   },
   {
     title: "Neuro-Pilot",
@@ -18,7 +29,7 @@ const projects = [
     description: "AI-powered support system for neurodivergent students, developed for the Technation AI Hackathon. Replaces rigid timers with gentle momentum, breaking tasks into sensory-friendly micro-steps.",
     highlights: ["Micro-step task breakdown", "Sensory-friendly UX", "Hackathon Project", "Momentum-based workflow"],
     tags: ["python", "openai", "accessibility", "uxdesign"],
-    link: "https://github.com/yourusername/neuro-pilot"
+    link: "https://github.com/Khushi-Patel-code/Neuro-Pilot"
   },
   {
     title: "Battery SOH Predictor",
@@ -109,8 +120,18 @@ const Projects = () => {
             >
               {/* IMAGE / PREVIEW BOX */}
               <div className="lg:w-3/5 aspect-video bg-zinc-900/50 rounded-3xl border border-white/5 overflow-hidden relative">
-                <div className="absolute top-8 left-8 z-20 max-w-xs pointer-events-none">
-                  <p className="text-xl text-zinc-300 font-medium leading-snug">
+                <div
+                  className={`absolute left-8 z-20 max-w-xs pointer-events-none ${
+                    "image" in project && project.image ? "bottom-6" : "top-8"
+                  }`}
+                >
+                  <p
+                    className={`font-medium leading-snug ${
+                      "image" in project && project.image
+                        ? "text-sm text-zinc-100 bg-black/75 backdrop-blur rounded-full px-4 py-2 inline-block"
+                        : "text-xl text-zinc-300"
+                    }`}
+                  >
                     {project.subtitle}
                   </p>
                 </div>
@@ -138,11 +159,23 @@ const Projects = () => {
                     </a>
                 </div>
 
-                <div className="absolute -bottom-1/4 -left-1/4 w-[150%] h-[150%] bg-indigo-500/10 rounded-full blur-[120px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
-                
-                <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-mono text-xs uppercase tracking-widest pt-20 text-center px-4 pointer-events-none">
-                   {project.title} Interface Preview
-                </div>
+                {"image" in project && project.image ? (
+                  <>
+                    <img
+                      src={project.image}
+                      alt={`${project.title} screenshot`}
+                      className="absolute inset-0 w-full h-full object-cover object-top pt-0"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 to-transparent pointer-events-none"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="absolute -bottom-1/4 -left-1/4 w-[150%] h-[150%] bg-indigo-500/10 rounded-full blur-[120px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+                    <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-mono text-xs uppercase tracking-widest pt-20 text-center px-4 pointer-events-none">
+                      {project.title} Interface Preview
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* TEXT CONTENT */}
@@ -156,6 +189,17 @@ const Projects = () => {
                     {project.description}
                   </p>
                 </div>
+
+                {"demo" in project && project.demo && (
+                  <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pointer-events-auto self-start text-sm text-indigo-400 hover:text-indigo-300"
+                  >
+                    Open the live demo →
+                  </a>
+                )}
 
                 <ul className="space-y-2">
                   {project.highlights.map((item, i) => (
