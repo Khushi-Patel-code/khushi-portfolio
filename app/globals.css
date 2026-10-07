@@ -8,8 +8,13 @@
   --color-rule: #d8ccba;
   --color-maroon: #52003a;
   --color-mark: #f0d08c;
+  --color-sw-bg: #eff0ec;
+  --color-sw-ink: #111315;
+  --color-sw-line: #c4c8bf;
+  --color-sw-dim: #596058;
   --font-display: "Fraunces Variable", Georgia, serif;
   --font-body: "Krub", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 html {

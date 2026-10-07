@@ -4,6 +4,9 @@ import "@fontsource-variable/fraunces/opsz-italic.css";
 import "@fontsource/krub/400.css";
 import "@fontsource/krub/500.css";
 import "@fontsource/krub/600.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/700.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -1,25 +1,31 @@
-import Hero from "./sections/Hero";
-import Projects from "./sections/Projects";
-import Experience from "./sections/Experience";
-import Skills from "./sections/Skills";
-import Closing from "./sections/Closing";
-import Nav from "./components/Nav";
-import { ViewProvider } from "./components/ViewContext";
+"use client";
+
+import { AnimatePresence, motion } from "framer-motion";
+import { ViewProvider, useView } from "./components/ViewContext";
+import SoftwareTemplate from "./templates/SoftwareTemplate";
+import UxTemplate from "./templates/UxTemplate";
+
+function Site() {
+  const { view } = useView();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={view}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {view === "software" ? <SoftwareTemplate /> : <UxTemplate />}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 export default function Home() {
   return (
     <ViewProvider>
-      <Nav />
-      <main>
-        <Hero />
-        <Projects />
-        <Experience />
-        <Skills />
-        <Closing />
-      </main>
-      <footer className="max-w-5xl mx-auto px-6 md:px-10 py-10 border-t border-rule text-sm text-muted">
-        © {new Date().getFullYear()} Khushi Patel. Set in Fraunces and Krub.
-      </footer>
+      <Site />
     </ViewProvider>
   );
 }
