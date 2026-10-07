@@ -17,7 +17,7 @@ export default function ViewPill({ tone }: { tone: View }) {
       aria-label="Switch view"
       className={`fixed top-3 right-3 z-[90] flex p-0.5 rounded-full text-xs backdrop-blur ${
         dark
-          ? "font-mono bg-[#1b1e25]/90 border border-[#2a2e38] text-[#9aa3b2]"
+          ? "font-mono bg-[#12122a]/90 border border-[#2b2b55] text-[#9ba0d0]"
           : "bg-cream/85 border border-ink2/15 text-ink2"
       }`}
     >
@@ -30,7 +30,7 @@ export default function ViewPill({ tone }: { tone: View }) {
           className={`px-3 py-1.5 rounded-full transition-colors ${
             view === v.id
               ? dark
-                ? "bg-[#e5c07b] text-[#15171c] font-medium"
+                ? "bg-gradient-to-r from-[#3df5c8] to-[#8b9bff] text-[#0a0a14] font-semibold"
                 : "bg-maroon text-cream font-medium"
               : "hover:opacity-70"
           }`}

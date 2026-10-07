@@ -10,12 +10,12 @@ import { useView } from "../components/ViewContext";
 import { projects, softwareOrder, moreWork, githubUrl, roles, skills, links } from "../data";
 
 // syntax colours
-const K = ({ children }: { children: React.ReactNode }) => <span className="text-[#c678dd]">{children}</span>;
-const S = ({ children }: { children: React.ReactNode }) => <span className="text-[#98c379]">{children}</span>;
-const P = ({ children }: { children: React.ReactNode }) => <span className="text-[#e06c75]">{children}</span>;
-const N = ({ children }: { children: React.ReactNode }) => <span className="text-[#d19a66]">{children}</span>;
-const C = ({ children }: { children: React.ReactNode }) => <span className="text-[#5c6370] italic">{children}</span>;
-const F = ({ children }: { children: React.ReactNode }) => <span className="text-[#61afef]">{children}</span>;
+const K = ({ children }: { children: React.ReactNode }) => <span className="text-[#d28bff]">{children}</span>;
+const S = ({ children }: { children: React.ReactNode }) => <span className="text-[#b6ff5c]">{children}</span>;
+const P = ({ children }: { children: React.ReactNode }) => <span className="text-[#ff5c8a]">{children}</span>;
+const N = ({ children }: { children: React.ReactNode }) => <span className="text-[#ffb454]">{children}</span>;
+const C = ({ children }: { children: React.ReactNode }) => <span className="text-[#6f73a8] italic">{children}</span>;
+const F = ({ children }: { children: React.ReactNode }) => <span className="text-[#8b9bff]">{children}</span>;
 
 const tree = [
   { id: "about", file: "about.ts" },
@@ -30,7 +30,7 @@ const heroLines = [
   { prompt: true, text: "whoami" },
   { prompt: false, text: "khushi patel, software engineer" },
   { prompt: true, text: "cat status.txt" },
-  { prompt: false, text: "4th year at Ontario Tech | GPA 4.06 | top 100 of 11,000+ at FAR AWAY 2026" },
+  { prompt: false, text: "CMO @ TMSA | always curious | looking for Winter 2027 internships" },
 ];
 
 function useTyped(total: number) {
@@ -48,9 +48,9 @@ function useTyped(total: number) {
 
 function Panel({ id, file, children }: { id: string; file: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-14 border border-ed-line bg-ed-panel rounded-md overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-2 border-b border-ed-line bg-[#171a20] text-xs text-ed-dim">
-        <span className="w-2 h-2 rounded-full bg-[#e5c07b]" />
+    <section id={id} className="scroll-mt-14 border border-ed-line bg-ed-panel rounded-md overflow-hidden shadow-[0_0_44px_-18px_rgba(139,155,255,0.55)] hover:border-[#8b9bff]/50 transition-colors">
+      <div className="flex items-center gap-2 px-4 py-2 border-b border-ed-line bg-[#181838] text-xs text-ed-dim">
+        <span className="w-2 h-2 rounded-full bg-[#3df5c8]" />
         <span className="text-ed-text">{file}</span>
       </div>
       <div className="p-5 md:p-7 text-[13.5px] md:text-sm leading-[1.7]">{children}</div>
@@ -71,7 +71,7 @@ export default function SoftwareTemplate() {
   const idRef = useRef(1);
   const outRef = useRef<HTMLDivElement>(null);
 
-  const a = "underline decoration-[#e5c07b] underline-offset-4 hover:text-[#e5c07b]";
+  const a = "underline decoration-[#3df5c8] underline-offset-4 hover:text-[#3df5c8]";
 
   function run(raw: string) {
     const [cmd, ...rest] = raw.trim().toLowerCase().split(/\s+/);
@@ -88,7 +88,7 @@ export default function SoftwareTemplate() {
       add("commands: about, projects, experience, stack, contact, farsight, github, linkedin, ux, clear");
     } else if (cmd === "about") {
       add("Software engineering student at Ontario Tech. I build full-stack and multi-agent systems.");
-      add("CMO of the Tech Management Student Association. Looking for a co-op from Winter 2027.");
+      add("CMO of the Tech Management Student Association. Always curious. Looking for Winter 2027 internships.");
     } else if (cmd === "projects") {
       softwareOrder.forEach((k) => add(`${projects[k].title}: ${projects[k].stack}`));
       add("type farsight for the live demo");
@@ -131,7 +131,7 @@ export default function SoftwareTemplate() {
 
     setOut((o) => [
       ...o,
-      { id: idRef.current++, node: <span className="text-[#98c379]">$ {raw}</span> },
+      { id: idRef.current++, node: <span className="text-[#b6ff5c]">$ {raw}</span> },
       ...lines.map((n) => ({ id: idRef.current++, node: n })),
     ]);
   }
@@ -144,10 +144,10 @@ export default function SoftwareTemplate() {
   let left = typed;
 
   return (
-    <div className="bg-ed-bg text-ed-text font-mono min-h-screen selection:bg-[#e5c07b]/30">
+    <div className="bg-ed-bg text-ed-text font-mono min-h-screen selection:bg-[#3df5c8]/30">
       <ViewPill tone="software" />
 
-      <div className="flex items-center gap-2 px-4 h-11 border-b border-ed-line bg-[#12141a] text-xs text-ed-dim">
+      <div className="flex items-center gap-2 px-4 h-11 border-b border-ed-line bg-[#0d0d22] text-xs text-ed-dim">
         <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
         <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
         <span className="w-3 h-3 rounded-full bg-[#28c840]" />
@@ -158,10 +158,13 @@ export default function SoftwareTemplate() {
         <div className="absolute inset-0 opacity-90">
           <CodeRain />
         </div>
+        <div className="absolute -top-24 -left-24 w-[34rem] h-[34rem] rounded-full bg-[#7c3aed]/25 blur-[110px]" />
+        <div className="absolute -top-10 right-0 w-[30rem] h-[30rem] rounded-full bg-[#06b6d4]/20 blur-[110px]" />
+        <div className="absolute bottom-0 left-1/3 w-[28rem] h-[18rem] rounded-full bg-[#ff2d95]/15 blur-[100px]" />
         <div className="absolute inset-0 bg-gradient-to-t from-ed-bg via-ed-bg/40 to-transparent" />
         <div className="relative h-full max-w-6xl mx-auto px-6 md:px-10 flex flex-col justify-end pb-10">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.05]">
-            Khushi Patel<span className="text-[#e5c07b]">.</span>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.05] bg-gradient-to-r from-[#3df5c8] via-[#8b9bff] to-[#ff5c8a] bg-clip-text text-transparent w-fit">
+            Khushi Patel<span className="text-white">.</span>
           </h1>
           <div className="text-sm md:text-base space-y-1 min-h-[7.5rem]">
             {heroLines.map((l, i) => {
@@ -170,7 +173,7 @@ export default function SoftwareTemplate() {
               if (take === 0 && typed < total) return null;
               const done = take === l.text.length;
               return (
-                <div key={i} className={l.prompt ? "text-[#98c379]" : "text-ed-text"}>
+                <div key={i} className={l.prompt ? "text-[#b6ff5c]" : "text-ed-text"}>
                   {l.prompt && <span className="text-ed-dim">$ </span>}
                   {l.text.slice(0, take)}
                   {!done && <span className="caret">_</span>}
@@ -191,14 +194,14 @@ export default function SoftwareTemplate() {
             <ul className="space-y-1.5">
               {tree.map((t) => (
                 <li key={t.id}>
-                  <a href={`#${t.id}`} className="text-ed-text/80 hover:text-[#e5c07b]">
+                  <a href={`#${t.id}`} className="text-ed-text/80 hover:text-[#3df5c8]">
                     <span className="text-ed-dim mr-2">{t.file.endsWith("/") ? ">" : "-"}</span>
                     {t.file}
                   </a>
                 </li>
               ))}
               <li>
-                <a href="#terminal" className="text-ed-text/80 hover:text-[#e5c07b]">
+                <a href="#terminal" className="text-ed-text/80 hover:text-[#3df5c8]">
                   <span className="text-ed-dim mr-2">-</span>terminal
                 </a>
               </li>
@@ -207,7 +210,7 @@ export default function SoftwareTemplate() {
         </aside>
 
         <main className="space-y-8 min-w-0">
-          <section id="terminal" className="scroll-mt-14 border border-ed-line bg-[#0f1115] rounded-md overflow-hidden">
+          <section id="terminal" className="scroll-mt-14 border border-ed-line bg-[#07070f] rounded-md overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-2 border-b border-ed-line text-xs text-ed-dim">terminal</div>
             <div ref={outRef} className="px-5 pt-4 h-44 overflow-y-auto text-sm space-y-1">
               {out.map((o) => (
@@ -222,7 +225,7 @@ export default function SoftwareTemplate() {
               }}
               className="flex items-center gap-2 px-5 py-3 border-t border-ed-line"
             >
-              <span className="text-[#98c379]">$</span>
+              <span className="text-[#b6ff5c]">$</span>
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -239,7 +242,7 @@ export default function SoftwareTemplate() {
                   key={c}
                   type="button"
                   onClick={() => run(c)}
-                  className="text-xs border border-ed-line px-2.5 py-1 rounded text-ed-dim hover:text-[#e5c07b] hover:border-[#e5c07b]/60"
+                  className="text-xs border border-ed-line px-2.5 py-1 rounded text-ed-dim hover:text-[#3df5c8] hover:border-[#3df5c8]/60"
                 >
                   {c}
                 </button>
@@ -271,7 +274,7 @@ export default function SoftwareTemplate() {
                 <Panel key={p.id} id={`p-${p.id}`} file={`projects/${p.id}.tsx`}>
                   <div className="flex flex-wrap items-baseline justify-between gap-3 mb-3">
                     <h3 className="text-xl md:text-2xl font-bold text-white">
-                      <span className="text-[#e5c07b] mr-2">0{i + 1}</span>
+                      <span className="text-[#3df5c8] mr-2">0{i + 1}</span>
                       {p.title}
                     </h3>
                     <span className="flex gap-5 text-xs">
@@ -301,7 +304,7 @@ export default function SoftwareTemplate() {
                       <C>{"// decision loop"}</C>
                       {["observe", "predict", "reason", "recommend", "act"].map((s, j, arr) => (
                         <span key={s} className="flex items-center gap-2">
-                          <span className="border border-ed-line px-2 py-0.5 rounded text-[#61afef]">{s}</span>
+                          <span className="border border-ed-line px-2 py-0.5 rounded text-[#8b9bff]">{s}</span>
                           {j < arr.length - 1 && <span className="text-ed-dim">&gt;</span>}
                         </span>
                       ))}
@@ -361,14 +364,14 @@ export default function SoftwareTemplate() {
               {roles.map((r) => (
                 <div key={r.org + r.role}>
                   <p className="text-xs text-ed-dim">
-                    <span className="text-[#e5c07b]">*</span> {r.dates}
+                    <span className="text-[#3df5c8]">*</span> {r.dates}
                   </p>
                   <h3 className="text-base md:text-lg font-bold text-white mt-1">{r.role}</h3>
                   <p className="text-ed-dim text-xs mb-3">{r.org}</p>
                   <ul className="space-y-2" style={{ fontFamily: "var(--font-body)" }}>
                     {r.bullets.map((b) => (
                       <li key={b} className="flex gap-3 text-[15px] text-ed-text/90 leading-relaxed">
-                        <span className="text-[#98c379] shrink-0">+</span>
+                        <span className="text-[#b6ff5c] shrink-0">+</span>
                         {b}
                       </li>
                     ))}

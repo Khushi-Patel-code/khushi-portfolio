@@ -111,29 +111,61 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
   );
 }
 
-// numbered note that shows up in audit mode
-function Pin({ n, note, audit, className }: { n: number; note: string; audit: boolean; className: string }) {
+// spec tag that shows up when the inspector is on
+function Pin({ note, audit, className }: { n?: number; note: string; audit: boolean; className: string }) {
   return (
     <AnimatePresence>
       {audit && (
         <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 18, delay: n * 0.07 }}
-          className={`absolute z-40 group ${className}`}
+          initial={{ opacity: 0, y: 8, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+          transition={{ duration: 0.35, ease }}
+          className={`absolute z-40 max-w-[17rem] rounded-md bg-ink2 text-cream text-[12.5px] leading-snug font-mono px-3 py-2 shadow-xl border border-coral/60 pointer-events-none ${className}`}
         >
-          <button
-            type="button"
-            aria-label={`Design note ${n}`}
-            className="w-9 h-9 rounded-full bg-coral text-ink2 font-bold text-sm border-2 border-ink2 shadow-[3px_3px_0_#16110f]"
-          >
-            {n}
-          </button>
-          <span className="pointer-events-none absolute left-11 top-0 w-60 rounded-md bg-ink2 text-cream text-[13px] leading-snug p-3 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity shadow-xl">
-            {note}
-          </span>
+          {note}
         </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+const palette = [
+  { name: "Maroon", hex: "#52003a" },
+  { name: "Cream", hex: "#f6efe4" },
+  { name: "Coral", hex: "#ff6b4a" },
+  { name: "Highlight", hex: "#f0d08c" },
+  { name: "Ink", hex: "#16110f" },
+];
+
+// swatches and fonts for the whole page, shown with the inspector
+function Inspector({ open }: { open: boolean }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.aside
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.35, ease }}
+          className="fixed left-4 bottom-20 z-[90] w-[15.5rem] rounded-lg bg-ink2 text-cream p-4 shadow-2xl border border-cream/15 font-mono text-[12px]"
+        >
+          <p className="text-cream/50 tracking-widest mb-2">COLOURS</p>
+          <ul className="space-y-1.5 mb-4">
+            {palette.map((c) => (
+              <li key={c.hex} className="flex items-center gap-2.5">
+                <span className="w-5 h-5 rounded-full border border-cream/30" style={{ background: c.hex }} />
+                <span>{c.name}</span>
+                <span className="ml-auto text-cream/60">{c.hex}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-cream/50 tracking-widest mb-2">TYPE</p>
+          <p className="font-display italic text-xl leading-tight">Fraunces</p>
+          <p className="text-cream/60 mb-2">display, headings</p>
+          <p className="font-body text-base leading-tight">Krub</p>
+          <p className="text-cream/60">body text</p>
+        </motion.aside>
       )}
     </AnimatePresence>
   );
@@ -320,7 +352,7 @@ function Work({ items, audit }: { items: Project[]; audit: boolean }) {
       className="relative bg-ink2 text-cream"
       style={desktop ? { height: `${n * 100}vh` } : undefined}
     >
-      <Pin n={4} audit={audit} className="top-24 right-8" note="Projects scroll sideways one at a time, so each one gets the whole screen and you never compare them by accident." />
+      <Pin audit={audit} className="top-24 right-8" note="↙ Pinned horizontal scroll: one project per screen, driven by scroll position. Coral #ff6b4a progress bar." />
       <div className={desktop ? "sticky top-0 h-screen overflow-hidden" : ""}>
         {desktop && (
           <p className="absolute top-8 left-14 z-10 font-display italic text-cream/70 text-lg">Selected work</p>
@@ -370,7 +402,7 @@ function ExperienceRow({ r, open, onToggle }: { r: (typeof roles)[number]; open:
             transition={{ duration: 0.5, ease }}
             className="overflow-hidden"
           >
-            <p className="text-ink2/60 -mt-3 mb-4">{r.org}</p>
+            <p className="text-ink2/60 pt-1 mb-4">{r.org}</p>
             <ul className="pb-8 space-y-2 list-disc pl-5 marker:text-coral max-w-3xl text-lg">
               {r.bullets.map((b) => (
                 <li key={b}>{b}</li>
@@ -416,8 +448,10 @@ export default function UxTemplate() {
           audit ? "bg-coral text-ink2" : "bg-cream text-ink2 hover:bg-mark"
         }`}
       >
-        {audit ? "Audit mode: on" : "Audit this page"}
+        {audit ? "Hide design details" : "Show design details"}
       </button>
+
+      <Inspector open={audit} />
 
       <section
         className="relative min-h-screen bg-maroon text-cream overflow-hidden flex flex-col justify-between"
@@ -430,10 +464,10 @@ export default function UxTemplate() {
         <div className="absolute inset-y-0 right-0 left-0 md:left-[47%] pointer-events-none opacity-40 md:opacity-100">
           <DesignCanvas />
         </div>
-        <Pin n={1} audit={audit} className="top-[6.25rem] left-6 md:left-[31rem]" note="Name first, big. Someone skimming from across a table knows who this is in a second." />
+        <Pin audit={audit} className="top-[8.5rem] left-6 md:left-[27rem]" note="↙ Fraunces Italic, 15vw. Cream #f6efe4 on maroon #52003a. Outlined surname is a 2px text stroke." />
 
         <div className="relative px-6 md:px-14 pt-24">
-          <p className="text-sm tracking-[0.25em] uppercase text-cream/70">Software engineer, UX and product</p>
+          <p className="text-sm md:text-base tracking-[0.2em] uppercase text-cream/80">Chief Marketing Officer, TMSA <span className="text-coral">/</span> software <span className="text-coral">/</span> UX <span className="text-coral">/</span> product</p>
         </div>
 
         <div className="relative px-6 md:px-14">
@@ -488,14 +522,14 @@ export default function UxTemplate() {
           </motion.div>
         </div>
 
-        <div className="relative px-6 md:px-14 pb-32 pt-8 flex flex-wrap items-end justify-between gap-6">
+        <div className="relative px-6 md:px-14 pb-28 md:pb-32 pt-8 flex flex-wrap items-end justify-between gap-6">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.1, ease }}
             className="font-display text-2xl md:text-4xl max-w-xl leading-snug"
           >
-            I find the moment people get confused, then <em className="text-mark">fix it</em>.
+            Always curious why people <em className="text-mark">click</em>, and why they don&apos;t.
           </motion.p>
           <motion.dl
             initial={{ opacity: 0 }}
@@ -504,52 +538,49 @@ export default function UxTemplate() {
             className="flex gap-8 text-sm text-cream/80"
           >
             <div>
-              <dt className="text-cream/50">Ontario Tech</dt>
-              <dd className="text-xl font-display">GPA 4.06</dd>
+              <dt className="text-cream/50">Leading</dt>
+              <dd className="text-xl font-display">TMSA, Ontario Tech</dd>
             </div>
             <div>
-              <dt className="text-cream/50">FAR AWAY 2026</dt>
-              <dd className="text-xl font-display">Top 100 of 11,000+</dd>
+              <dt className="text-cream/50">Looking for</dt>
+              <dd className="text-xl font-display">Winter 2027 internships</dd>
             </div>
           </motion.dl>
         </div>
       </section>
 
       <div className="relative">
-        <Pin n={2} audit={audit} className="top-3 left-6 md:left-14" note="A moving strip of my process. It says how I work before anyone reads a word." />
+        <Pin audit={audit} className="top-3 left-6 md:left-14" note="↙ Two marquees, coral #ff6b4a and ink #16110f, tilted 1 degree each way, opposite directions." />
         <Marquee className="bg-coral text-ink2 -rotate-1 scale-105 relative z-10" />
         <Marquee rev className="bg-ink2 text-cream rotate-1 scale-105 -mt-4" />
       </div>
 
-      <section className="relative px-6 md:px-14 py-28 md:py-40">
-        <Pin n={3} audit={audit} className="top-10 right-8" note="Numbers do the talking here. They count up when you arrive, so your eye lands on them." />
+      <Work items={items} audit={audit} />
+
+      <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
+        <Pin audit={audit} className="top-10 right-8" note="↙ Accordion rows. Role in Fraunces 48px, dates in Krub 14px at 60% ink." />
         <div className="max-w-6xl mx-auto">
-          <p className="font-display italic text-maroon text-xl mb-4">Case studies</p>
-          <h2 className="font-display text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-5xl">
-            I audit things until they stop <em className="text-maroon">confusing people.</em>
+          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
+            Where I&apos;ve <em className="text-maroon">worked</em>
           </h2>
-          <p className="mt-8 text-xl max-w-2xl text-ink2/75">
-            At HireZapp, an AI recruiting startup, I compared the product against its competitors, wrote down why
-            each issue mattered, and redesigned the candidate communications hub. It shipped after CEO approval.
+          {roles.map((r, i) => (
+            <ExperienceRow key={r.org + r.role} r={r} open={openRow === i} onToggle={() => setOpenRow(openRow === i ? -1 : i)} />
+          ))}
+          <div className="border-t border-ink2/20" />
+        </div>
+      </section>
+
+      <section id="case-studies" className="relative px-6 md:px-14 py-24 md:py-32">
+        <Pin audit={audit} className="top-8 right-8" note="↙ Cards use one 16:9 frame each, so a video and a text-only study sit side by side evenly." />
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-6">
+            Case <em className="text-maroon">studies</em>
+          </h2>
+          <p className="text-xl max-w-2xl text-ink2/75">
+            Two from my HireZapp internship and one from school. Each one is short: the problem, what I did,
+            how I worked, and what came out of it.
           </p>
-
-          <dl className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6 border-t border-ink2/20 pt-10">
-            {[
-              { n: 15, s: "+", l: "pages audited" },
-              { n: 20, s: "+", l: "competitors compared" },
-              { n: 30, s: "+", l: "blog posts audited" },
-              { n: 1, s: "", l: "redesign shipped to production" },
-            ].map((s) => (
-              <div key={s.l}>
-                <dd className="font-display text-6xl md:text-8xl leading-none text-maroon">
-                  <CountUp to={s.n} suffix={s.s} />
-                </dd>
-                <dt className="mt-2 text-ink2/70">{s.l}</dt>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-16 grid md:grid-cols-3 gap-6">
+          <div className="mt-12 grid md:grid-cols-3 gap-6">
             {caseStudies.map((c, i) => (
               <Link
                 key={c.slug}
@@ -575,8 +606,6 @@ export default function UxTemplate() {
           </div>
         </div>
       </section>
-
-      <Work items={items} audit={audit} />
 
       <section className="px-6 md:px-14 py-24 bg-cream">
         <div className="max-w-5xl mx-auto">
@@ -610,19 +639,6 @@ export default function UxTemplate() {
         </div>
       </section>
 
-      <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
-        <Pin n={5} audit={audit} className="top-10 right-8" note="Roles open one at a time. You get the headline first, the detail only if you want it." />
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
-            Where I&apos;ve <em className="text-maroon">worked</em>
-          </h2>
-          {roles.map((r, i) => (
-            <ExperienceRow key={r.org + r.role} r={r} open={openRow === i} onToggle={() => setOpenRow(openRow === i ? -1 : i)} />
-          ))}
-          <div className="border-t border-ink2/20" />
-        </div>
-      </section>
-
       <section className="px-6 md:px-14 py-24 bg-mark/40">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-12">
@@ -647,7 +663,7 @@ export default function UxTemplate() {
       </section>
 
       <section id="contact" className="relative bg-coral text-ink2 px-6 md:px-14 pt-24 pb-10 overflow-hidden">
-        <Pin n={6} audit={audit} className="top-8 right-8" note="One clear next step: say hi. Everything else on this page leads here." />
+        <Pin audit={audit} className="top-8 right-8" note="↙ Fraunces Italic at 22vw on coral #ff6b4a. One action: email." />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display italic leading-[0.85] tracking-tight" style={{ fontSize: "clamp(6rem, 22vw, 20rem)" }}>
             Say hi.

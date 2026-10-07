@@ -11,73 +11,66 @@ export type Project = {
 };
 
 export const projects: Record<string, Project> = {
-  farsight: {
-    id: "farsight",
-    title: "Farsight",
-    line: "A multi-agent system that predicts where crowds will build up in railway stations and tells operators what to do about it. Top 100 of 11,000+ applicants at FAR AWAY 2026, and invited to the in-person round in Delhi.",
-    stack: "React, TypeScript, Tailwind CSS, multi-agent systems",
-    github: "https://github.com/Khushi-Patel-code/Farsight",
-    demo: "https://farsight-fawn.vercel.app",
-    image: "/projects/farsight-dashboard.jpg",
-    clips: [
-      { label: "Explainer", src: "/videos/ex-farsight.mp4", poster: "/videos/ex-farsight.jpg" },
-      { label: "Live demo", src: "/videos/farsight.mp4", poster: "/videos/farsight.jpg" },
-    ],
-    alt: "Farsight operator dashboard with a live simulation map, risk alerts and recommendations",
-  },
-  neuro: {
-    id: "neuro",
-    title: "Neuro-Pilot",
-    line: "AI support for neurodivergent students. It swaps rigid timers for gentle momentum and breaks tasks into small, sensory-friendly steps. Built for the TechNation AI hackathon.",
-    stack: "Python, Streamlit, Gemma 3 27B, accessibility-first UX",
-    github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
-    clips: [
-      { label: "Explainer", src: "/videos/ex-neuro.mp4", poster: "/videos/ex-neuro.jpg" },
-      { label: "Demo clip", src: "/videos/neuropilot.mp4", poster: "/videos/neuropilot.jpg" },
-    ],
+  soh: {
+    id: "soh",
+    title: "Battery SOH Prediction",
+    line: "A team project that predicts a battery's state of health from 21 voltage readings, with a chatbot that explains the result in plain language. I built the Linear Regression model, the data preprocessing and the evaluation.",
+    stack: "Python, scikit-learn, pandas, Flask, React",
+    github: "https://github.com/Khushi-Patel-code/BatterySOH-AI",
+    image: "/projects/soh-dashboard.jpg",
+    alt: "Battery health dashboard with a voltage input grid, predicted SOH, model metrics and a chatbot panel",
+    clips: [{ label: "Explainer", src: "/videos/ex-soh.mp4", poster: "/videos/ex-soh.jpg" }],
   },
   ecom: {
     id: "ecom",
     title: "E-Commerce Inventory & Order System",
-    line: "A full-stack system for inventory and orders, with role-based logins, order tracking, and sales analytics for admins.",
+    line: "A full-stack system for inventory and orders, with role-based logins, order tracking, CSV and PDF exports, and sales analytics for admins.",
     stack: "Node.js, Express, MySQL, JWT, Chart.js",
     github: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
     image: "/projects/ecom-dashboard.jpg",
-    clips: [{ label: "Explainer", src: "/videos/ex-ecom.mp4", poster: "/videos/ex-ecom.jpg" }],
     alt: "E-commerce admin dashboard showing revenue, products, customers and sales charts",
+    clips: [{ label: "Explainer", src: "/videos/ex-ecom.mp4", poster: "/videos/ex-ecom.jpg" }],
   },
   coach: {
     id: "coach",
-    title: "Multi-Agent AI Learning Coach",
-    line: "A group of AI agents that put together personalized study plans and research summaries. My Kaggle capstone, focused on session memory and how agents use tools.",
+    title: "StudyPilot",
+    line: "A multi-agent study planner. An orchestrator coordinates agents for planning, research, summarizing, coaching and scheduling, with memory and session state so context survives every handoff. Built as a Kaggle capstone.",
     stack: "Python, multi-agent orchestration, memory and session services",
     github: "https://github.com/Khushi-Patel-code/AI-learning-coach-kaggle-capstone",
     clips: [{ label: "Explainer", src: "/videos/ex-coach.mp4", poster: "/videos/ex-coach.jpg" }],
   },
+  farsight: {
+    id: "farsight",
+    title: "Farsight",
+    line: "A multi-agent railway intelligence platform I co-built with a team for FAR AWAY 2026. Passenger, security, train and medical agents run on a live digital twin, and the AI's recommendations change the simulation.",
+    stack: "React, TypeScript, Tailwind CSS, multi-agent systems",
+    github: "https://github.com/Khushi-Patel-code/Farsight",
+    demo: "https://farsight-fawn.vercel.app",
+    image: "/projects/farsight-dashboard.jpg",
+    alt: "Farsight operator dashboard with a live simulation map, risk alerts and recommendations",
+    clips: [
+      { label: "Explainer", src: "/videos/ex-farsight.mp4", poster: "/videos/ex-farsight.jpg" },
+      { label: "Live demo", src: "/videos/farsight.mp4", poster: "/videos/farsight.jpg" },
+    ],
+  },
 };
 
-export const uxOrder = ["farsight", "neuro", "ecom", "coach"];
-export const softwareOrder = ["farsight", "ecom", "coach", "neuro"];
+export const uxOrder = ["soh", "ecom", "coach", "farsight"];
+export const softwareOrder = ["soh", "ecom", "coach", "farsight"];
 
 // more work that lives on GitHub, shown as a short list
 export const moreWork = [
   {
-    title: "Battery SOH Predictor",
-    line: "Predicts battery state of health with linear regression, plus a chatbot that explains the sensor data.",
-    stack: "React, Flask, scikit-learn",
-    github: "https://github.com/Khushi-Patel-code/BatterySOH-AI",
+    title: "Neuro-Pilot",
+    line: "An AI task coach for neurodivergent students that breaks big tasks into one gentle step at a time. Built at the Technation AI hackathon.",
+    stack: "Python, Streamlit, Gemma 3 27B",
+    github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
   },
   {
     title: "TSWF Automation Framework",
-    line: "A Bash task scheduler with process control, error handling and cron integration.",
+    line: "A Bash task scheduler with process control, error handling and cron integration. I built the notifications and error handling.",
     stack: "Bash, Linux",
     github: "https://github.com/Khushi-Patel-code/TASK-SCHEDULER",
-  },
-  {
-    title: "ChronoSlate Web Calendar",
-    line: "An interactive calendar with saved events and a high-contrast interface.",
-    stack: "JavaScript, HTML, CSS",
-    github: "https://github.com/Khushi-Patel-code/Chronoslate_Web_calendar",
   },
 ];
 

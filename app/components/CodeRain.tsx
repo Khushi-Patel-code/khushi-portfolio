@@ -31,7 +31,7 @@ export default function CodeRain({ className = "" }: { className?: string }) {
     const LH = 18;
 
     const pick = () => TOKENS[(Math.random() * TOKENS.length) | 0];
-    const colors = ["#7aa2f7", "#98c379", "#e5c07b", "#c678dd", "#56b6c2"];
+    const colors = ["#8b9bff", "#b6ff5c", "#ffd166", "#d28bff", "#3df5c8"];
 
     function init() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
