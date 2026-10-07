@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import CodeRain from "../components/CodeRain";
-import { caseStudies } from "../case-studies/data";
 import ProjectVideo from "../components/ProjectVideo";
 import ViewPill from "../components/ViewPill";
 import { useView } from "../components/ViewContext";
@@ -20,7 +18,6 @@ const F = ({ children }: { children: React.ReactNode }) => <span className="text
 const tree = [
   { id: "about", file: "about.ts" },
   { id: "projects", file: "projects/" },
-  { id: "case-studies", file: "case-studies/" },
   { id: "experience", file: "experience.log" },
   { id: "stack", file: "stack.json" },
   { id: "contact", file: "contact.sh" },
@@ -30,7 +27,7 @@ const heroLines = [
   { prompt: true, text: "whoami" },
   { prompt: false, text: "khushi patel, software engineer" },
   { prompt: true, text: "cat status.txt" },
-  { prompt: false, text: "CMO @ TMSA | always curious | looking for Winter 2027 internships" },
+  { prompt: false, text: "CMO @ TMSA | looking for Winter 2027 internships" },
 ];
 
 function useTyped(total: number) {
@@ -88,7 +85,7 @@ export default function SoftwareTemplate() {
       add("commands: about, projects, experience, stack, contact, farsight, github, linkedin, ux, clear");
     } else if (cmd === "about") {
       add("Software engineering student at Ontario Tech. I build full-stack and multi-agent systems.");
-      add("CMO of the Tech Management Student Association. Always curious. Looking for Winter 2027 internships.");
+      add("CMO of the Tech Management Student Association. Looking for Winter 2027 internships.");
     } else if (cmd === "projects") {
       softwareOrder.forEach((k) => add(`${projects[k].title}: ${projects[k].stack}`));
       add("type farsight for the live demo");
@@ -181,9 +178,6 @@ export default function SoftwareTemplate() {
               );
             })}
           </div>
-          <p className="mt-4 text-xs text-ed-dim max-w-xl">
-            {"// the background is live code and data tokens. move your mouse over it."}
-          </p>
         </div>
       </header>
 
@@ -252,7 +246,7 @@ export default function SoftwareTemplate() {
 
           <Panel id="about" file="about.ts">
             <ol className="code">
-              <li><C>{"// who I am, in one object"}</C></li>
+              <li><C>{"// about me"}</C></li>
               <li><span><K>const</K> <F>khushi</F> = {"{"}</span></li>
               <li><span>{"  "}<P>role</P>: <S>&quot;Software engineer (student)&quot;</S>,</span></li>
               <li><span>{"  "}<P>school</P>: <S>&quot;Ontario Tech University, B.Eng. Software Engineering&quot;</S>,</span></li>
@@ -323,20 +317,6 @@ export default function SoftwareTemplate() {
                 </Panel>
               );
             })}
-
-            <Panel id="case-studies" file="case-studies/">
-              <p className="text-ed-dim text-xs mb-4">{"// real work, written up. each has an animated walkthrough or a full write-up."}</p>
-              <ul className="space-y-5" style={{ fontFamily: "var(--font-body)" }}>
-                {caseStudies.map((c, i) => (
-                  <li key={c.slug} className="text-[15px]">
-                    <Link href={`/case-studies/${c.slug}`} className={`${a} font-medium text-white`}>
-                      0{i + 1} {c.title}
-                    </Link>
-                    <p className="text-ed-text/80 mt-1">{c.short}</p>
-                  </li>
-                ))}
-              </ul>
-            </Panel>
 
             <Panel id="more" file="projects/more.md">
               <p className="text-ed-dim text-xs mb-3">more on github</p>

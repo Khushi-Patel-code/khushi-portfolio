@@ -24,7 +24,7 @@ export const projects: Record<string, Project> = {
   ecom: {
     id: "ecom",
     title: "E-Commerce Inventory & Order System",
-    line: "A full-stack system for inventory and orders, with role-based logins, order tracking, CSV and PDF exports, and sales analytics for admins.",
+    line: "An inventory and order system with two roles. Customers browse, filter and order. Admins manage stock, update orders, export CSV and PDF, and see sales charts.",
     stack: "Node.js, Express, MySQL, JWT, Chart.js",
     github: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
     image: "/projects/ecom-dashboard.jpg",
@@ -34,7 +34,7 @@ export const projects: Record<string, Project> = {
   coach: {
     id: "coach",
     title: "StudyPilot",
-    line: "A multi-agent study planner. An orchestrator coordinates agents for planning, research, summarizing, coaching and scheduling, with memory and session state so context survives every handoff. Built as a Kaggle capstone.",
+    line: "A study planner I built for a Kaggle capstone. You give it a goal and an orchestrator passes the work to planner, research, summarizer, coach and timetable agents, keeping memory and session history as it goes.",
     stack: "Python, multi-agent orchestration, memory and session services",
     github: "https://github.com/Khushi-Patel-code/AI-learning-coach-kaggle-capstone",
     clips: [{ label: "Explainer", src: "/videos/ex-coach.mp4", poster: "/videos/ex-coach.jpg" }],
@@ -42,7 +42,7 @@ export const projects: Record<string, Project> = {
   farsight: {
     id: "farsight",
     title: "Farsight",
-    line: "A multi-agent railway intelligence platform I co-built with a team for FAR AWAY 2026. Passenger, security, train and medical agents run on a live digital twin, and the AI's recommendations change the simulation.",
+    line: "A railway crowd-management platform my team built for FAR AWAY 2026. Passenger, security, train and medical agents run inside a Mumbai CST simulation, and what the AI recommends changes what happens next.",
     stack: "React, TypeScript, Tailwind CSS, multi-agent systems",
     github: "https://github.com/Khushi-Patel-code/Farsight",
     demo: "https://farsight-fawn.vercel.app",
@@ -55,22 +55,22 @@ export const projects: Record<string, Project> = {
   },
 };
 
-export const uxOrder = ["soh", "ecom", "coach", "farsight"];
-export const softwareOrder = ["soh", "ecom", "coach", "farsight"];
+export const uxOrder = ["farsight", "ecom", "coach", "soh"];
+export const softwareOrder = ["farsight", "ecom", "coach", "soh"];
 
 // more work that lives on GitHub, shown as a short list
 export const moreWork = [
-  {
-    title: "Neuro-Pilot",
-    line: "An AI task coach for neurodivergent students that breaks big tasks into one gentle step at a time. Built at the Technation AI hackathon.",
-    stack: "Python, Streamlit, Gemma 3 27B",
-    github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
-  },
   {
     title: "TSWF Automation Framework",
     line: "A Bash task scheduler with process control, error handling and cron integration. I built the notifications and error handling.",
     stack: "Bash, Linux",
     github: "https://github.com/Khushi-Patel-code/TASK-SCHEDULER",
+  },
+  {
+    title: "Neuro-Pilot",
+    line: "An AI task coach for neurodivergent students that breaks big tasks into one gentle step at a time. Built at the Technation AI hackathon.",
+    stack: "Python, Streamlit, Gemma 3 27B",
+    github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
   },
 ];
 
@@ -109,7 +109,7 @@ export const roles = [
   },
   {
     dates: "2023 to now",
-    role: "Peer Educator, Peer Mentor, Level One Ambassador",
+    role: "Peer Educator",
     org: "Ontario Tech University",
     bullets: [
       "Mentored 5+ incoming engineering students through academic onboarding, and spoke with 50+ prospective students and families at recruitment events.",

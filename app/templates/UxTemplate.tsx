@@ -4,7 +4,7 @@ import { caseStudies } from "../case-studies/data";
 import DesignCanvas from "../components/DesignCanvas";
 import ProjectVideo from "../components/ProjectVideo";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   animate,
@@ -111,60 +111,167 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
   );
 }
 
-// spec tag that shows up when the inspector is on
-function Pin({ note, audit, className }: { n?: number; note: string; audit: boolean; className: string }) {
+// what each section is built from, shown in the Figma-style panel as you scroll
+const specs: Record<string, { name: string; type: [string, string][]; colours: [string, string][]; note: string }> = {
+  hero: {
+    name: "Hero",
+    type: [["Fraunces Italic", "name, 15vw"], ["Fraunces", "tagline, 30px"], ["Krub", "labels, caps"]],
+    colours: [["Maroon", "#52003a"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"], ["Highlight", "#f0d08c"]],
+    note: "Outlined surname is a 2px text stroke. The board on the right is drawn live on a canvas.",
+  },
+  ticker: {
+    name: "Ticker",
+    type: [["Fraunces Italic", "48px"]],
+    colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"], ["Cream", "#f6efe4"]],
+    note: "Two marquees tilted 1 degree each way, running opposite directions.",
+  },
+  work: {
+    name: "Selected work",
+    type: [["Fraunces", "project titles"], ["Krub", "body, 18px"]],
+    colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"]],
+    note: "Pinned horizontal scroll. One project per screen, driven by scroll position.",
+  },
+  experience: {
+    name: "Experience",
+    type: [["Fraunces", "role, 48px"], ["Krub", "dates, 14px at 60% ink"]],
+    colours: [["Ink", "#16110f"], ["Maroon", "#52003a"], ["Coral", "#ff6b4a"]],
+    note: "Accordion rows. The open row animates its height with a grid track, not a fixed pixel value.",
+  },
+  cases: {
+    name: "Case studies",
+    type: [["Fraunces", "titles"], ["Krub", "body"]],
+    colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Maroon", "#52003a"]],
+    note: "Every card uses one 16:9 frame, so a video and a text-only study sit side by side evenly.",
+  },
+  more: {
+    name: "More on GitHub",
+    type: [["Fraunces", "heading"], ["Krub", "body"]],
+    colours: [["Cream", "#f6efe4"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
+    note: "Smaller projects as a short list, so the big four keep the attention.",
+  },
+  skills: {
+    name: "Skills",
+    type: [["Fraunces", "heading"], ["Krub", "lists"]],
+    colours: [["Highlight", "#f0d08c"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
+    note: "Plain grouped lists. No bars or percentages, because those are made up.",
+  },
+  contact: {
+    name: "Contact",
+    type: [["Fraunces Italic", "22vw"]],
+    colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"]],
+    note: "One action: email.",
+  },
+};
+
+const figmaBlue = "#0d99ff";
+
+// blue selection frame that draws itself around a section as it scrolls into view
+function SpecFrame({ id, audit, current, onDims }: { id: string; audit: boolean; current: string; onDims: (id: string, d: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState("");
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    if (!audit || !ref.current) return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.02 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [audit]);
+  useEffect(() => {
+    const el = ref.current?.parentElement;
+    if (!audit || !el) return;
+    const set = () => {
+      const d = `${Math.round(el.offsetWidth)} × ${Math.round(el.offsetHeight)}`;
+      setDims(d);
+      onDims(id, d);
+    };
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [audit, id, onDims]);
+  const handle = "absolute w-2.5 h-2.5 bg-white border-2 rounded-[2px]";
   return (
-    <AnimatePresence>
-      {audit && (
-        <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 8, scale: 0.96 }}
-          transition={{ duration: 0.35, ease }}
-          className={`absolute z-40 max-w-[17rem] rounded-md bg-ink2 text-cream text-[12.5px] leading-snug font-mono px-3 py-2 shadow-xl border border-coral/60 pointer-events-none ${className}`}
-        >
-          {note}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div ref={ref} aria-hidden="true" data-spec={id} className="pointer-events-none absolute inset-0 z-[60]">
+      <AnimatePresence>
+        {audit && (
+          <motion.div
+            initial={{ clipPath: "inset(0 100% 100% 0)", opacity: 0 }}
+            animate={seen ? { clipPath: "inset(0 0% 0% 0)", opacity: 1 } : { clipPath: "inset(0 100% 100% 0)", opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease }}
+            className="absolute inset-0"
+            style={{ boxShadow: `inset 0 0 0 2px ${figmaBlue}`, background: current === id ? "rgba(13,153,255,.05)" : "transparent" }}
+          >
+            <span className="absolute left-0 top-0 font-mono text-[11px] text-white px-2 py-0.5" style={{ background: figmaBlue }}>
+              {specs[id].name}
+            </span>
+            <span className="absolute left-1/2 -translate-x-1/2 bottom-2 font-mono text-[11px] text-white px-2 py-0.5 rounded" style={{ background: figmaBlue }}>
+              {dims}
+            </span>
+            {["-left-1 -top-1", "-right-1 -top-1", "-left-1 -bottom-1", "-right-1 -bottom-1"].map((c) => (
+              <i key={c} className={`${handle} ${c}`} style={{ borderColor: figmaBlue }} />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
-const palette = [
-  { name: "Maroon", hex: "#52003a" },
-  { name: "Cream", hex: "#f6efe4" },
-  { name: "Coral", hex: "#ff6b4a" },
-  { name: "Highlight", hex: "#f0d08c" },
-  { name: "Ink", hex: "#16110f" },
-];
-
-// swatches and fonts for the whole page, shown with the inspector
-function Inspector({ open }: { open: boolean }) {
+// the right-hand panel from Figma, rewritten for whichever section is in the middle of the screen
+function Inspector({ open, current, dims }: { open: boolean; current: string; dims: Record<string, string> }) {
+  const sp = specs[current] ?? specs.hero;
   return (
     <AnimatePresence>
       {open && (
         <motion.aside
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          exit={{ opacity: 0, x: 24 }}
           transition={{ duration: 0.35, ease }}
-          className="fixed left-4 bottom-20 z-[90] w-[15.5rem] rounded-lg bg-ink2 text-cream p-4 shadow-2xl border border-cream/15 font-mono text-[12px]"
+          className="fixed right-4 bottom-4 z-[90] w-[16.5rem] rounded-lg bg-[#2c2c2c] text-white shadow-2xl border border-white/10 font-mono text-[12px] overflow-hidden"
         >
-          <p className="text-cream/50 tracking-widest mb-2">COLOURS</p>
-          <ul className="space-y-1.5 mb-4">
-            {palette.map((c) => (
-              <li key={c.hex} className="flex items-center gap-2.5">
-                <span className="w-5 h-5 rounded-full border border-cream/30" style={{ background: c.hex }} />
-                <span>{c.name}</span>
-                <span className="ml-auto text-cream/60">{c.hex}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-cream/50 tracking-widest mb-2">TYPE</p>
-          <p className="font-display italic text-xl leading-tight">Fraunces</p>
-          <p className="text-cream/60 mb-2">display, headings</p>
-          <p className="font-body text-base leading-tight">Krub</p>
-          <p className="text-cream/60">body text</p>
+          <div className="flex gap-4 px-4 pt-3 pb-2 border-b border-white/10 text-white/50">
+            <span className="text-white border-b-2 pb-1" style={{ borderColor: figmaBlue }}>Design</span>
+            <span>Prototype</span>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22 }}
+              className="p-4 space-y-4"
+            >
+              <div>
+                <p className="text-white text-[13px]">{sp.name}</p>
+                <p className="text-white/50">Frame {dims[current] ?? ""}</p>
+              </div>
+              <div>
+                <p className="text-white/45 tracking-widest mb-1.5">TEXT</p>
+                {sp.type.map(([f, u]) => (
+                  <p key={f} className="flex justify-between gap-3">
+                    <span>{f}</span>
+                    <span className="text-white/50 text-right">{u}</span>
+                  </p>
+                ))}
+              </div>
+              <div>
+                <p className="text-white/45 tracking-widest mb-1.5">FILL</p>
+                <ul className="space-y-1">
+                  {sp.colours.map(([n, h]) => (
+                    <li key={h} className="flex items-center gap-2.5">
+                      <span className="w-4 h-4 rounded-[3px] border border-white/30" style={{ background: h }} />
+                      <span>{n}</span>
+                      <span className="ml-auto text-white/55">{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-white/60 leading-snug font-sans text-[12.5px]">{sp.note}</p>
+            </motion.div>
+          </AnimatePresence>
         </motion.aside>
       )}
     </AnimatePresence>
@@ -337,7 +444,7 @@ function WorkPanel({ p, i, desktop }: { p: Project; i: number; desktop: boolean 
   );
 }
 
-function Work({ items, audit }: { items: Project[]; audit: boolean }) {
+function Work({ items, audit, current, onDims }: { items: Project[]; audit: boolean; current: string; onDims: (id: string, d: string) => void }) {
   const ref = useRef<HTMLElement>(null);
   const desktop = useIsDesktop();
   const n = items.length;
@@ -352,7 +459,7 @@ function Work({ items, audit }: { items: Project[]; audit: boolean }) {
       className="relative bg-ink2 text-cream"
       style={desktop ? { height: `${n * 100}vh` } : undefined}
     >
-      <Pin audit={audit} className="top-24 right-8" note="↙ Pinned horizontal scroll: one project per screen, driven by scroll position. Coral #ff6b4a progress bar." />
+      <SpecFrame id="work" audit={audit} current={current} onDims={onDims} />
       <div className={desktop ? "sticky top-0 h-screen overflow-hidden" : ""}>
         {desktop && (
           <p className="absolute top-8 left-14 z-10 font-display italic text-cream/70 text-lg">Selected work</p>
@@ -393,31 +500,27 @@ function ExperienceRow({ r, open, onToggle }: { r: (typeof roles)[number]; open:
           <span className={`inline-block transition-transform ${open ? "rotate-45" : ""}`}>+</span>
         </span>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.5, ease }}
-            className="overflow-hidden"
-          >
-            <p className="text-ink2/60 pt-1 mb-4">{r.org}</p>
-            <ul className="pb-8 space-y-2 list-disc pl-5 marker:text-coral max-w-3xl text-lg">
-              {r.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-            {r.caseStudy && (
-              <p className="pb-8">
-                <Link href="/case-studies/hirezapp" className="link">
-                  Read the HireZapp case study
-                </Link>
-              </p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(.22,.8,.2,1)]"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}
+        aria-hidden={!open}
+      >
+        <div className="overflow-hidden min-h-0">
+          <p className="text-ink2/60 pt-1 mb-4">{r.org}</p>
+          <ul className="pb-8 space-y-2 list-disc pl-5 marker:text-coral max-w-3xl text-lg">
+            {r.bullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+          {r.caseStudy && (
+            <p className="pb-8">
+              <Link href="/case-studies/hirezapp" className="link" tabIndex={open ? 0 : -1}>
+                Read the HireZapp case study
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -425,6 +528,19 @@ function ExperienceRow({ r, open, onToggle }: { r: (typeof roles)[number]; open:
 export default function UxTemplate() {
   const [audit, setAudit] = useState(false);
   const [openRow, setOpenRow] = useState(0);
+  const [current, setCurrent] = useState("hero");
+  const [dims, setDims] = useState<Record<string, string>>({});
+  const onDims = useCallback((id: string, d: string) => setDims((p) => (p[id] === d ? p : { ...p, [id]: d })), []);
+  // whichever frame crosses the middle of the screen drives the side panel
+  useEffect(() => {
+    if (!audit) return;
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && setCurrent((e.target as HTMLElement).dataset.spec || "hero")),
+      { rootMargin: "-48% 0px -48% 0px" }
+    );
+    document.querySelectorAll("[data-spec]").forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, [audit]);
   const items = uxOrder.map((k) => projects[k]);
 
   const mx = useMotionValue(0);
@@ -451,7 +567,7 @@ export default function UxTemplate() {
         {audit ? "Hide design details" : "Show design details"}
       </button>
 
-      <Inspector open={audit} />
+      <Inspector open={audit} current={current} dims={dims} />
 
       <section
         className="relative min-h-screen bg-maroon text-cream overflow-hidden flex flex-col justify-between"
@@ -461,10 +577,10 @@ export default function UxTemplate() {
           my.set(((e.clientY - r.top) / r.height) * 2 - 1);
         }}
       >
+        <SpecFrame id="hero" audit={audit} current={current} onDims={onDims} />
         <div className="absolute inset-y-0 right-0 left-0 md:left-[47%] pointer-events-none opacity-40 md:opacity-100">
           <DesignCanvas />
         </div>
-        <Pin audit={audit} className="top-[8.5rem] left-6 md:left-[27rem]" note="↙ Fraunces Italic, 15vw. Cream #f6efe4 on maroon #52003a. Outlined surname is a 2px text stroke." />
 
         <div className="relative px-6 md:px-14 pt-24">
           <p className="text-sm md:text-base tracking-[0.2em] uppercase text-cream/80">Chief Marketing Officer, TMSA <span className="text-coral">/</span> software <span className="text-coral">/</span> UX <span className="text-coral">/</span> product</p>
@@ -550,15 +666,15 @@ export default function UxTemplate() {
       </section>
 
       <div className="relative">
-        <Pin audit={audit} className="top-3 left-6 md:left-14" note="↙ Two marquees, coral #ff6b4a and ink #16110f, tilted 1 degree each way, opposite directions." />
+        <SpecFrame id="ticker" audit={audit} current={current} onDims={onDims} />
         <Marquee className="bg-coral text-ink2 -rotate-1 scale-105 relative z-10" />
         <Marquee rev className="bg-ink2 text-cream rotate-1 scale-105 -mt-4" />
       </div>
 
-      <Work items={items} audit={audit} />
+      <Work items={items} audit={audit} current={current} onDims={onDims} />
 
       <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
-        <Pin audit={audit} className="top-10 right-8" note="↙ Accordion rows. Role in Fraunces 48px, dates in Krub 14px at 60% ink." />
+        <SpecFrame id="experience" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
             Where I&apos;ve <em className="text-maroon">worked</em>
@@ -571,7 +687,7 @@ export default function UxTemplate() {
       </section>
 
       <section id="case-studies" className="relative px-6 md:px-14 py-24 md:py-32">
-        <Pin audit={audit} className="top-8 right-8" note="↙ Cards use one 16:9 frame each, so a video and a text-only study sit side by side evenly." />
+        <SpecFrame id="cases" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-6">
             Case <em className="text-maroon">studies</em>
@@ -607,7 +723,8 @@ export default function UxTemplate() {
         </div>
       </section>
 
-      <section className="px-6 md:px-14 py-24 bg-cream">
+      <section className="relative px-6 md:px-14 py-24 bg-cream">
+        <SpecFrame id="more" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-5xl mx-auto">
           <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-10">
             More <em className="text-maroon">on GitHub</em>
@@ -639,7 +756,8 @@ export default function UxTemplate() {
         </div>
       </section>
 
-      <section className="px-6 md:px-14 py-24 bg-mark/40">
+      <section className="relative px-6 md:px-14 py-24 bg-mark/40">
+        <SpecFrame id="skills" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-12">
             What I <em className="text-maroon">use</em>
@@ -663,7 +781,7 @@ export default function UxTemplate() {
       </section>
 
       <section id="contact" className="relative bg-coral text-ink2 px-6 md:px-14 pt-24 pb-10 overflow-hidden">
-        <Pin audit={audit} className="top-8 right-8" note="↙ Fraunces Italic at 22vw on coral #ff6b4a. One action: email." />
+        <SpecFrame id="contact" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display italic leading-[0.85] tracking-tight" style={{ fontSize: "clamp(6rem, 22vw, 20rem)" }}>
             Say hi.
