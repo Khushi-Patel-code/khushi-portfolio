@@ -879,7 +879,7 @@ export default function UxTemplate() {
               ))}
           </ul>
           <p className="mt-16 pb-16 md:pl-44 text-sm text-ink2/60">
-            © {new Date().getFullYear()} Khushi Patel. Set in Fraunces and Krub.
+            © {new Date().getFullYear()} Khushi Patel.
           </p>
         </div>
       </section>

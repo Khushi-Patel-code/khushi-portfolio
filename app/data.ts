@@ -138,4 +138,4 @@ export const links = [
 ];
 
 // paste the live resume link (or a /resume.pdf in public/) here. While it is empty the resume sections stay hidden.
-export const resumeUrl = "";
+export const resumeUrl = "/Khushi-Patel-Resume.pdf";
