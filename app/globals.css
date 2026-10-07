@@ -11,11 +11,11 @@
   --color-cream: #f6efe4;
   --color-coral: #ff6b4a;
   --color-ink2: #16110f;
-  --color-ed-bg: #15171c;
-  --color-ed-panel: #1b1e25;
-  --color-ed-line: #2a2e38;
-  --color-ed-text: #c5cad4;
-  --color-ed-dim: #6b7280;
+  --color-ed-bg: #0a0a14;
+  --color-ed-panel: #10102a;
+  --color-ed-line: #2b2b55;
+  --color-ed-text: #d9dbf7;
+  --color-ed-dim: #8084b5;
   --font-display: "Fraunces Variable", Georgia, serif;
   --font-body: "Krub", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -98,7 +98,7 @@ body {
   width: 1.75rem;
   flex-shrink: 0;
   text-align: right;
-  color: #4b5263;
+  color: #55589a;
   user-select: none;
 }
 

@@ -4,7 +4,7 @@ import { caseStudies } from "../case-studies/data";
 import DesignCanvas from "../components/DesignCanvas";
 import ProjectVideo from "../components/ProjectVideo";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   animate,
@@ -16,7 +16,7 @@ import {
   useTransform,
 } from "framer-motion";
 import ViewPill from "../components/ViewPill";
-import { projects, uxOrder, moreWork, githubUrl, roles, skills, links, Project } from "../data";
+import { projects, uxOrder, moreWork, githubUrl, roles, skills, links, resumeUrl, Project } from "../data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -111,29 +111,207 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
   );
 }
 
-// numbered note that shows up in audit mode
-function Pin({ n, note, audit, className }: { n: number; note: string; audit: boolean; className: string }) {
+// what each section is built from, shown in the Figma-style panel as you scroll
+const specs: Record<string, { name: string; type: [string, string][]; colours: [string, string][]; note: string; flow: [string, string][] }> = {
+  hero: {
+    name: "Hero",
+    flow: [["Mouse move", "Smart animate, canvas follows the cursor"], ["On load", "Name types in, surname outlines"], ["Click toggle", "Open design details"]],
+    type: [["Fraunces Italic", "name, 15vw"], ["Fraunces", "tagline, 30px"], ["Krub", "labels, caps"]],
+    colours: [["Maroon", "#52003a"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"], ["Highlight", "#f0d08c"]],
+    note: "Outlined surname is a 2px text stroke. The board on the right is drawn live on a canvas.",
+  },
+  ticker: {
+    name: "Ticker",
+    flow: [["While loading", "Marquee, linear, 28s, loops"], ["Row 2", "Same loop, reversed"]],
+    type: [["Fraunces Italic", "48px"]],
+    colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"], ["Cream", "#f6efe4"]],
+    note: "Two marquees tilted 1 degree each way, running opposite directions.",
+  },
+  work: {
+    name: "Selected work",
+    flow: [["While scrolling", "Pinned. Page scroll moves the row sideways"], ["Hover card", "Video plays, tabs switch clips"]],
+    type: [["Fraunces", "project titles"], ["Krub", "body, 18px"]],
+    colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"]],
+    note: "Pinned horizontal scroll. One project per screen, driven by scroll position.",
+  },
+  experience: {
+    name: "Experience",
+    flow: [["Click row", "Open, grid rows 0fr to 1fr, 500ms"], ["Click again", "Close"], ["Hover title", "Italic, maroon"]],
+    type: [["Fraunces", "role, 48px"], ["Krub", "dates, 14px at 60% ink"]],
+    colours: [["Ink", "#16110f"], ["Maroon", "#52003a"], ["Coral", "#ff6b4a"]],
+    note: "Accordion rows. The open row animates its height with a grid track, not a fixed pixel value.",
+  },
+  cases: {
+    name: "Case studies",
+    flow: [["Click card", "Navigate to the write-up"], ["Hover", "Card lifts, arrow slides"]],
+    type: [["Fraunces", "titles"], ["Krub", "body"]],
+    colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Maroon", "#52003a"]],
+    note: "Every card uses one 16:9 frame, so a video and a text-only study sit side by side evenly.",
+  },
+  more: {
+    name: "More on GitHub",
+    flow: [["Click title", "Open the repo on GitHub"]],
+    type: [["Fraunces", "heading"], ["Krub", "body"]],
+    colours: [["Cream", "#f6efe4"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
+    note: "Smaller projects as a short list, so the big four keep the attention.",
+  },
+  skills: {
+    name: "Skills",
+    flow: [["On scroll", "Groups fade up, 60ms apart"]],
+    type: [["Fraunces", "heading"], ["Krub", "lists"]],
+    colours: [["Highlight", "#f0d08c"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
+    note: "Plain grouped lists. No bars or percentages, because those are made up.",
+  },
+  contact: {
+    name: "Contact",
+    flow: [["Hover email", "Button follows the cursor, magnetic"], ["Click", "Opens your mail app"]],
+    type: [["Fraunces Italic", "22vw"]],
+    colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"]],
+    note: "One action: email.",
+  },
+};
+
+const figmaBlue = "#0d99ff";
+
+// blue selection frame that draws itself around a section as it scrolls into view
+function SpecFrame({ id, audit, current, onDims }: { id: string; audit: boolean; current: string; onDims: (id: string, d: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState("");
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    if (!audit || !ref.current) return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.02 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [audit]);
+  useEffect(() => {
+    const el = ref.current?.parentElement;
+    if (!audit || !el) return;
+    const set = () => {
+      const d = `${Math.round(el.offsetWidth)} × ${Math.round(el.offsetHeight)}`;
+      setDims(d);
+      onDims(id, d);
+    };
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [audit, id, onDims]);
+  const handle = "absolute w-2.5 h-2.5 bg-white border-2 rounded-[2px]";
+  return (
+    <div ref={ref} aria-hidden="true" data-spec={id} className="pointer-events-none absolute inset-0 z-[60]">
+      <AnimatePresence>
+        {audit && (
+          <motion.div
+            initial={{ clipPath: "inset(0 100% 100% 0)", opacity: 0 }}
+            animate={seen ? { clipPath: "inset(0 0% 0% 0)", opacity: 1 } : { clipPath: "inset(0 100% 100% 0)", opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease }}
+            className="absolute inset-0"
+            style={{ boxShadow: `inset 0 0 0 2px ${figmaBlue}`, background: current === id ? "rgba(13,153,255,.05)" : "transparent" }}
+          >
+            <span className="absolute left-0 top-0 font-mono text-[11px] text-white px-2 py-0.5" style={{ background: figmaBlue }}>
+              {specs[id].name}
+            </span>
+            <span className="absolute left-1/2 -translate-x-1/2 bottom-2 font-mono text-[11px] text-white px-2 py-0.5 rounded" style={{ background: figmaBlue }}>
+              {dims}
+            </span>
+            {["-left-1 -top-1", "-right-1 -top-1", "-left-1 -bottom-1", "-right-1 -bottom-1"].map((c) => (
+              <i key={c} className={`${handle} ${c}`} style={{ borderColor: figmaBlue }} />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// the right-hand panel from Figma, rewritten for whichever section is in the middle of the screen
+function Inspector({ open, current, dims }: { open: boolean; current: string; dims: Record<string, string> }) {
+  const [tab, setTab] = useState<"design" | "prototype">("design");
+  const sp = specs[current] ?? specs.hero;
   return (
     <AnimatePresence>
-      {audit && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 18, delay: n * 0.07 }}
-          className={`absolute z-40 group ${className}`}
+      {open && (
+        <motion.aside
+          initial={{ opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 24 }}
+          transition={{ duration: 0.35, ease }}
+          className="fixed right-4 bottom-4 z-[90] w-[16.5rem] rounded-lg bg-[#2c2c2c] text-white shadow-2xl border border-white/10 font-mono text-[12px] overflow-hidden"
         >
-          <button
-            type="button"
-            aria-label={`Design note ${n}`}
-            className="w-9 h-9 rounded-full bg-coral text-ink2 font-bold text-sm border-2 border-ink2 shadow-[3px_3px_0_#16110f]"
-          >
-            {n}
-          </button>
-          <span className="pointer-events-none absolute left-11 top-0 w-60 rounded-md bg-ink2 text-cream text-[13px] leading-snug p-3 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity shadow-xl">
-            {note}
-          </span>
-        </motion.div>
+          <div className="flex gap-4 px-4 pt-3 pb-2 border-b border-white/10 text-white/50">
+            {(["design", "prototype"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                aria-pressed={tab === t}
+                className={`capitalize pb-1 border-b-2 transition-colors ${tab === t ? "text-white" : "text-white/50 border-transparent hover:text-white/80"}`}
+                style={tab === t ? { borderColor: figmaBlue } : undefined}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current + tab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22 }}
+              className="p-4 space-y-4"
+            >
+              {tab === "design" ? (
+                <>
+              <div>
+                <p className="text-white text-[13px]">{sp.name}</p>
+                <p className="text-white/50">Frame {dims[current] ?? ""}</p>
+              </div>
+              <div>
+                <p className="text-white/45 tracking-widest mb-1.5">TEXT</p>
+                {sp.type.map(([f, u]) => (
+                  <p key={f} className="flex justify-between gap-3">
+                    <span>{f}</span>
+                    <span className="text-white/50 text-right">{u}</span>
+                  </p>
+                ))}
+              </div>
+              <div>
+                <p className="text-white/45 tracking-widest mb-1.5">FILL</p>
+                <ul className="space-y-1">
+                  {sp.colours.map(([n, h]) => (
+                    <li key={h} className="flex items-center gap-2.5">
+                      <span className="w-4 h-4 rounded-[3px] border border-white/30" style={{ background: h }} />
+                      <span>{n}</span>
+                      <span className="ml-auto text-white/55">{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+                </>
+              ) : (
+                <>
+              <div>
+                <p className="text-white text-[13px]">{sp.name}</p>
+                <p className="text-white/50">Interactions</p>
+              </div>
+              <ul className="space-y-2.5">
+                {sp.flow.map(([trig, act]) => (
+                  <li key={trig} className="rounded bg-white/5 px-2.5 py-2">
+                    <span style={{ color: figmaBlue }}>{trig}</span>
+                    <span className="text-white/40"> → </span>
+                    <span>{act}</span>
+                  </li>
+                ))}
+              </ul>
+                </>
+              )}
+              <p className="text-white/60 leading-snug font-sans text-[12.5px]">{sp.note}</p>
+            </motion.div>
+          </AnimatePresence>
+        </motion.aside>
       )}
     </AnimatePresence>
   );
@@ -305,7 +483,7 @@ function WorkPanel({ p, i, desktop }: { p: Project; i: number; desktop: boolean 
   );
 }
 
-function Work({ items, audit }: { items: Project[]; audit: boolean }) {
+function Work({ items, audit, current, onDims }: { items: Project[]; audit: boolean; current: string; onDims: (id: string, d: string) => void }) {
   const ref = useRef<HTMLElement>(null);
   const desktop = useIsDesktop();
   const n = items.length;
@@ -320,7 +498,7 @@ function Work({ items, audit }: { items: Project[]; audit: boolean }) {
       className="relative bg-ink2 text-cream"
       style={desktop ? { height: `${n * 100}vh` } : undefined}
     >
-      <Pin n={4} audit={audit} className="top-24 right-8" note="Projects scroll sideways one at a time, so each one gets the whole screen and you never compare them by accident." />
+      <SpecFrame id="work" audit={audit} current={current} onDims={onDims} />
       <div className={desktop ? "sticky top-0 h-screen overflow-hidden" : ""}>
         {desktop && (
           <p className="absolute top-8 left-14 z-10 font-display italic text-cream/70 text-lg">Selected work</p>
@@ -361,31 +539,27 @@ function ExperienceRow({ r, open, onToggle }: { r: (typeof roles)[number]; open:
           <span className={`inline-block transition-transform ${open ? "rotate-45" : ""}`}>+</span>
         </span>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.5, ease }}
-            className="overflow-hidden"
-          >
-            <p className="text-ink2/60 -mt-3 mb-4">{r.org}</p>
-            <ul className="pb-8 space-y-2 list-disc pl-5 marker:text-coral max-w-3xl text-lg">
-              {r.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-            {r.caseStudy && (
-              <p className="pb-8">
-                <Link href="/case-studies/hirezapp" className="link">
-                  Read the HireZapp case study
-                </Link>
-              </p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(.22,.8,.2,1)]"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}
+        aria-hidden={!open}
+      >
+        <div className="overflow-hidden min-h-0">
+          <p className="text-ink2/60 pt-1 mb-4">{r.org}</p>
+          <ul className="pb-8 space-y-2 list-disc pl-5 marker:text-coral max-w-3xl text-lg">
+            {r.bullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+          {r.caseStudy && (
+            <p className="pb-8">
+              <Link href="/case-studies/hirezapp" className="link" tabIndex={open ? 0 : -1}>
+                Read the HireZapp case study
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -393,6 +567,19 @@ function ExperienceRow({ r, open, onToggle }: { r: (typeof roles)[number]; open:
 export default function UxTemplate() {
   const [audit, setAudit] = useState(false);
   const [openRow, setOpenRow] = useState(0);
+  const [current, setCurrent] = useState("hero");
+  const [dims, setDims] = useState<Record<string, string>>({});
+  const onDims = useCallback((id: string, d: string) => setDims((p) => (p[id] === d ? p : { ...p, [id]: d })), []);
+  // whichever frame crosses the middle of the screen drives the side panel
+  useEffect(() => {
+    if (!audit) return;
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && setCurrent((e.target as HTMLElement).dataset.spec || "hero")),
+      { rootMargin: "-48% 0px -48% 0px" }
+    );
+    document.querySelectorAll("[data-spec]").forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, [audit]);
   const items = uxOrder.map((k) => projects[k]);
 
   const mx = useMotionValue(0);
@@ -416,8 +603,10 @@ export default function UxTemplate() {
           audit ? "bg-coral text-ink2" : "bg-cream text-ink2 hover:bg-mark"
         }`}
       >
-        {audit ? "Audit mode: on" : "Audit this page"}
+        {audit ? "Hide design details" : "Show design details"}
       </button>
+
+      <Inspector open={audit} current={current} dims={dims} />
 
       <section
         className="relative min-h-screen bg-maroon text-cream overflow-hidden flex flex-col justify-between"
@@ -427,13 +616,13 @@ export default function UxTemplate() {
           my.set(((e.clientY - r.top) / r.height) * 2 - 1);
         }}
       >
+        <SpecFrame id="hero" audit={audit} current={current} onDims={onDims} />
         <div className="absolute inset-y-0 right-0 left-0 md:left-[47%] pointer-events-none opacity-40 md:opacity-100">
           <DesignCanvas />
         </div>
-        <Pin n={1} audit={audit} className="top-[6.25rem] left-6 md:left-[31rem]" note="Name first, big. Someone skimming from across a table knows who this is in a second." />
 
         <div className="relative px-6 md:px-14 pt-24">
-          <p className="text-sm tracking-[0.25em] uppercase text-cream/70">Software engineer, UX and product</p>
+          <p className="text-sm md:text-base tracking-[0.2em] uppercase text-cream/80">Chief Marketing Officer, TMSA <span className="text-coral">/</span> software <span className="text-coral">/</span> UX <span className="text-coral">/</span> product</p>
         </div>
 
         <div className="relative px-6 md:px-14">
@@ -488,14 +677,17 @@ export default function UxTemplate() {
           </motion.div>
         </div>
 
-        <div className="relative px-6 md:px-14 pb-32 pt-8 flex flex-wrap items-end justify-between gap-6">
+        <div className="relative px-6 md:px-14 pb-28 md:pb-32 pt-8 flex flex-wrap items-end justify-between gap-6">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.1, ease }}
             className="font-display text-2xl md:text-4xl max-w-xl leading-snug"
           >
-            I find the moment people get confused, then <em className="text-mark">fix it</em>.
+            What if you&apos;re solving the{" "}
+            <span className="block whitespace-nowrap">
+              <em className="text-mark">wrong</em> problem?
+            </span>
           </motion.p>
           <motion.dl
             initial={{ opacity: 0 }}
@@ -504,52 +696,34 @@ export default function UxTemplate() {
             className="flex gap-8 text-sm text-cream/80"
           >
             <div>
-              <dt className="text-cream/50">Ontario Tech</dt>
-              <dd className="text-xl font-display">GPA 4.06</dd>
+              <dt className="text-cream/50">Leading</dt>
+              <dd className="text-xl font-display">TMSA, Ontario Tech</dd>
             </div>
             <div>
-              <dt className="text-cream/50">FAR AWAY 2026</dt>
-              <dd className="text-xl font-display">Top 100 of 11,000+</dd>
+              <dt className="text-cream/50">Looking for</dt>
+              <dd className="text-xl font-display">Winter 2027 internships</dd>
             </div>
           </motion.dl>
         </div>
       </section>
 
       <div className="relative">
-        <Pin n={2} audit={audit} className="top-3 left-6 md:left-14" note="A moving strip of my process. It says how I work before anyone reads a word." />
+        <SpecFrame id="ticker" audit={audit} current={current} onDims={onDims} />
         <Marquee className="bg-coral text-ink2 -rotate-1 scale-105 relative z-10" />
         <Marquee rev className="bg-ink2 text-cream rotate-1 scale-105 -mt-4" />
       </div>
 
-      <section className="relative px-6 md:px-14 py-28 md:py-40">
-        <Pin n={3} audit={audit} className="top-10 right-8" note="Numbers do the talking here. They count up when you arrive, so your eye lands on them." />
+      <section id="case-studies" className="relative px-6 md:px-14 py-24 md:py-32">
+        <SpecFrame id="cases" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
-          <p className="font-display italic text-maroon text-xl mb-4">Case studies</p>
-          <h2 className="font-display text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-5xl">
-            I audit things until they stop <em className="text-maroon">confusing people.</em>
+          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-6">
+            Case <em className="text-maroon">studies</em>
           </h2>
-          <p className="mt-8 text-xl max-w-2xl text-ink2/75">
-            At HireZapp, an AI recruiting startup, I compared the product against its competitors, wrote down why
-            each issue mattered, and redesigned the candidate communications hub. It shipped after CEO approval.
+          <p className="text-xl max-w-2xl text-ink2/75">
+            Two from my HireZapp internship and one from school. Each one is short: the problem, what I did,
+            how I worked, and what came out of it.
           </p>
-
-          <dl className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6 border-t border-ink2/20 pt-10">
-            {[
-              { n: 15, s: "+", l: "pages audited" },
-              { n: 20, s: "+", l: "competitors compared" },
-              { n: 30, s: "+", l: "blog posts audited" },
-              { n: 1, s: "", l: "redesign shipped to production" },
-            ].map((s) => (
-              <div key={s.l}>
-                <dd className="font-display text-6xl md:text-8xl leading-none text-maroon">
-                  <CountUp to={s.n} suffix={s.s} />
-                </dd>
-                <dt className="mt-2 text-ink2/70">{s.l}</dt>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-16 grid md:grid-cols-3 gap-6">
+          <div className="mt-12 grid md:grid-cols-3 gap-6">
             {caseStudies.map((c, i) => (
               <Link
                 key={c.slug}
@@ -560,13 +734,13 @@ export default function UxTemplate() {
                 <div className="aspect-video bg-maroon text-cream flex items-center justify-center overflow-hidden">
                   {c.video ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={c.video.poster} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img src={c.slug === "hirezapp" ? "/videos/hub-card.jpg" : c.video.poster} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
                     <span className="font-display italic text-6xl">Aa</span>
                   )}
                 </div>
                 <div className="p-5">
-                  <p className="font-display italic text-maroon mb-1">0{i + 1}{c.video ? " / video inside" : ""}</p>
+                  <p className="font-display italic text-maroon mb-1">0{i + 1}</p>
                   <h3 className="font-display text-xl leading-snug mb-2">{c.title}</h3>
                   <p className="text-sm text-ink2/70">{c.short}</p>
                 </div>
@@ -576,9 +750,11 @@ export default function UxTemplate() {
         </div>
       </section>
 
-      <Work items={items} audit={audit} />
+      <Work items={items} audit={audit} current={current} onDims={onDims} />
 
-      <section className="px-6 md:px-14 py-24 bg-cream">
+
+      <section className="relative px-6 md:px-14 py-24 bg-cream">
+        <SpecFrame id="more" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-5xl mx-auto">
           <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-10">
             More <em className="text-maroon">on GitHub</em>
@@ -611,7 +787,7 @@ export default function UxTemplate() {
       </section>
 
       <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
-        <Pin n={5} audit={audit} className="top-10 right-8" note="Roles open one at a time. You get the headline first, the detail only if you want it." />
+        <SpecFrame id="experience" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
             Where I&apos;ve <em className="text-maroon">worked</em>
@@ -623,7 +799,8 @@ export default function UxTemplate() {
         </div>
       </section>
 
-      <section className="px-6 md:px-14 py-24 bg-mark/40">
+      <section className="relative px-6 md:px-14 py-24 bg-mark/40">
+        <SpecFrame id="skills" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-12">
             What I <em className="text-maroon">use</em>
@@ -647,7 +824,7 @@ export default function UxTemplate() {
       </section>
 
       <section id="contact" className="relative bg-coral text-ink2 px-6 md:px-14 pt-24 pb-10 overflow-hidden">
-        <Pin n={6} audit={audit} className="top-8 right-8" note="One clear next step: say hi. Everything else on this page leads here." />
+        <SpecFrame id="contact" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display italic leading-[0.85] tracking-tight" style={{ fontSize: "clamp(6rem, 22vw, 20rem)" }}>
             Say hi.
@@ -665,15 +842,38 @@ export default function UxTemplate() {
                 khuship2708@gmail.com
               </a>
             </Magnetic>
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-2 ml-0 sm:ml-4 mt-4 sm:mt-0 px-8 py-4 rounded-full border-2 border-ink2 text-lg hover:bg-ink2 hover:text-cream transition-colors"
+              >
+                <span aria-hidden="true">&darr;</span> Download my resume
+              </a>
+            )}
           </div>
-          <ul className="mt-12 grid sm:grid-cols-2 gap-x-10 gap-y-2 max-w-xl">
+          <ul className="mt-12 flex flex-wrap gap-4">
             {links
               .filter((l) => l.label !== "Email")
               .map((l) => (
                 <li key={l.label}>
-                  <span className="text-ink2/60 mr-3">{l.label}</span>
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" className="link break-all">
-                    {l.value}
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={l.label}
+                    className="group flex items-center gap-3 pl-3 pr-5 py-2.5 rounded-full border-2 border-ink2 hover:bg-ink2 hover:text-cream transition-colors"
+                  >
+                    <span className="w-9 h-9 rounded-full bg-ink2 text-cream group-hover:bg-coral group-hover:text-ink2 grid place-items-center transition-colors">
+                      {l.label === "LinkedIn" ? (
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z" /></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z" /></svg>
+                      )}
+                    </span>
+                    <span className="text-base">{l.label}</span>
                   </a>
                 </li>
               ))}
