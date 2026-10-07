@@ -1,5 +1,6 @@
 "use client";
 
+import { caseStudies } from "../case-studies/data";
 import DesignCanvas from "../components/DesignCanvas";
 import ProjectVideo from "../components/ProjectVideo";
 import Link from "next/link";
@@ -270,7 +271,7 @@ function WorkPanel({ p, i, desktop }: { p: Project; i: number; desktop: boolean 
         </div>
 
         <div className="md:col-span-7">
-          {p.video ? (
+          {p.clips ? (
             <motion.div
               initial={{ rotate: -2.5, y: 30, opacity: 0 }}
               whileInView={{ rotate: -2.5, y: 0, opacity: 1 }}
@@ -280,7 +281,7 @@ function WorkPanel({ p, i, desktop }: { p: Project; i: number; desktop: boolean 
               data-hover
               className="rounded-md border-2 border-cream/80 overflow-hidden shadow-[14px_14px_0_#ff6b4a]"
             >
-              <ProjectVideo src={p.video} poster={p.poster ?? ""} label={`${p.title} demo video`} />
+              <ProjectVideo clips={p.clips} title={p.title} tabsClass="px-3 pt-3 text-cream" />
             </motion.div>
           ) : p.image ? (
             <motion.div
@@ -523,7 +524,7 @@ export default function UxTemplate() {
       <section className="relative px-6 md:px-14 py-28 md:py-40">
         <Pin n={3} audit={audit} className="top-10 right-8" note="Numbers do the talking here. They count up when you arrive, so your eye lands on them." />
         <div className="max-w-6xl mx-auto">
-          <p className="font-display italic text-maroon text-xl mb-4">Case study</p>
+          <p className="font-display italic text-maroon text-xl mb-4">Case studies</p>
           <h2 className="font-display text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-5xl">
             I audit things until they stop <em className="text-maroon">confusing people.</em>
           </h2>
@@ -548,15 +549,29 @@ export default function UxTemplate() {
             ))}
           </dl>
 
-          <div className="mt-14">
-            <Magnetic>
+          <div className="mt-16 grid md:grid-cols-3 gap-6">
+            {caseStudies.map((c, i) => (
               <Link
-                href="/case-studies/hirezapp"
-                className="inline-block px-8 py-4 rounded-full bg-maroon text-cream text-lg hover:bg-ink2 transition-colors"
+                key={c.slug}
+                href={`/case-studies/${c.slug}`}
+                data-hover
+                className="group block rounded-md border-2 border-ink2 overflow-hidden hover:-translate-y-1 hover:shadow-[8px_8px_0_#ff6b4a] transition-all bg-paper"
               >
-                Read the case study
+                <div className="aspect-video bg-maroon text-cream flex items-center justify-center overflow-hidden">
+                  {c.video ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={c.video.poster} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  ) : (
+                    <span className="font-display italic text-6xl">Aa</span>
+                  )}
+                </div>
+                <div className="p-5">
+                  <p className="font-display italic text-maroon mb-1">0{i + 1}{c.video ? " / video inside" : ""}</p>
+                  <h3 className="font-display text-xl leading-snug mb-2">{c.title}</h3>
+                  <p className="text-sm text-ink2/70">{c.short}</p>
+                </div>
               </Link>
-            </Magnetic>
+            ))}
           </div>
         </div>
       </section>

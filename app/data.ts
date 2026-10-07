@@ -6,8 +6,7 @@ export type Project = {
   github: string;
   demo?: string;
   image?: string;
-  video?: string;
-  poster?: string;
+  clips?: { label: string; src: string; poster: string }[];
   alt?: string;
 };
 
@@ -20,18 +19,22 @@ export const projects: Record<string, Project> = {
     github: "https://github.com/Khushi-Patel-code/Farsight",
     demo: "https://farsight-fawn.vercel.app",
     image: "/projects/farsight-dashboard.jpg",
-    video: "/videos/farsight.mp4",
-    poster: "/videos/farsight.jpg",
+    clips: [
+      { label: "Explainer", src: "/videos/ex-farsight.mp4", poster: "/videos/ex-farsight.jpg" },
+      { label: "Live demo", src: "/videos/farsight.mp4", poster: "/videos/farsight.jpg" },
+    ],
     alt: "Farsight operator dashboard with a live simulation map, risk alerts and recommendations",
   },
   neuro: {
     id: "neuro",
     title: "Neuro-Pilot",
     line: "AI support for neurodivergent students. It swaps rigid timers for gentle momentum and breaks tasks into small, sensory-friendly steps. Built for the TechNation AI hackathon.",
-    stack: "Python, OpenAI, accessibility-first UX",
+    stack: "Python, Streamlit, Gemma 3 27B, accessibility-first UX",
     github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
-    video: "/videos/neuropilot.mp4",
-    poster: "/videos/neuropilot.jpg",
+    clips: [
+      { label: "Explainer", src: "/videos/ex-neuro.mp4", poster: "/videos/ex-neuro.jpg" },
+      { label: "Demo clip", src: "/videos/neuropilot.mp4", poster: "/videos/neuropilot.jpg" },
+    ],
   },
   ecom: {
     id: "ecom",
@@ -40,16 +43,16 @@ export const projects: Record<string, Project> = {
     stack: "Node.js, Express, MySQL, JWT, Chart.js",
     github: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
     image: "/projects/ecom-dashboard.jpg",
-    video: "/videos/ecom.mp4",
-    poster: "/videos/ecom.jpg",
+    clips: [{ label: "Explainer", src: "/videos/ex-ecom.mp4", poster: "/videos/ex-ecom.jpg" }],
     alt: "E-commerce admin dashboard showing revenue, products, customers and sales charts",
   },
   coach: {
     id: "coach",
     title: "Multi-Agent AI Learning Coach",
     line: "A group of AI agents that put together personalized study plans and research summaries. My Kaggle capstone, focused on session memory and how agents use tools.",
-    stack: "Python, OpenAI, LangChain",
+    stack: "Python, multi-agent orchestration, memory and session services",
     github: "https://github.com/Khushi-Patel-code/AI-learning-coach-kaggle-capstone",
+    clips: [{ label: "Explainer", src: "/videos/ex-coach.mp4", poster: "/videos/ex-coach.jpg" }],
   },
 };
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import CodeRain from "../components/CodeRain";
+import { caseStudies } from "../case-studies/data";
 import ProjectVideo from "../components/ProjectVideo";
 import ViewPill from "../components/ViewPill";
 import { useView } from "../components/ViewContext";
@@ -18,6 +20,7 @@ const F = ({ children }: { children: React.ReactNode }) => <span className="text
 const tree = [
   { id: "about", file: "about.ts" },
   { id: "projects", file: "projects/" },
+  { id: "case-studies", file: "case-studies/" },
   { id: "experience", file: "experience.log" },
   { id: "stack", file: "stack.json" },
   { id: "contact", file: "contact.sh" },
@@ -304,13 +307,10 @@ export default function SoftwareTemplate() {
                       ))}
                     </p>
                   )}
-                  {p.video ? (
-                    <ProjectVideo
-                      src={p.video}
-                      poster={p.poster ?? ""}
-                      label={`${p.title} demo video`}
-                      className="mt-5 rounded border border-ed-line"
-                    />
+                  {p.clips ? (
+                    <div className="mt-5 text-ed-text">
+                      <ProjectVideo clips={p.clips} title={p.title} className="rounded border border-ed-line" />
+                    </div>
                   ) : (
                     p.image && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -320,6 +320,20 @@ export default function SoftwareTemplate() {
                 </Panel>
               );
             })}
+
+            <Panel id="case-studies" file="case-studies/">
+              <p className="text-ed-dim text-xs mb-4">{"// real work, written up. each has an animated walkthrough or a full write-up."}</p>
+              <ul className="space-y-5" style={{ fontFamily: "var(--font-body)" }}>
+                {caseStudies.map((c, i) => (
+                  <li key={c.slug} className="text-[15px]">
+                    <Link href={`/case-studies/${c.slug}`} className={`${a} font-medium text-white`}>
+                      0{i + 1} {c.title}
+                    </Link>
+                    <p className="text-ed-text/80 mt-1">{c.short}</p>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
 
             <Panel id="more" file="projects/more.md">
               <p className="text-ed-dim text-xs mb-3">more on github</p>
