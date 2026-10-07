@@ -684,7 +684,7 @@ export default function UxTemplate() {
             transition={{ duration: 1, delay: 1.1, ease }}
             className="font-display text-2xl md:text-4xl max-w-xl leading-snug"
           >
-            Always curious why people <em className="text-mark">click</em>, and why they don&apos;t.
+            What if you&apos;re solving the <em className="text-mark">wrong</em> problem?
           </motion.p>
           <motion.dl
             initial={{ opacity: 0 }}

@@ -25,9 +25,11 @@ const tree = [
 
 const heroLines = [
   { prompt: true, text: "whoami" },
-  { prompt: false, text: "fourth-year software engineering student, Ontario Tech" },
+  { prompt: false, text: "khushi, fourth-year software engineering @ Ontario Tech" },
+  { prompt: true, text: "cat stack.txt" },
+  { prompt: false, text: "full-stack, ML pipelines, multi-agent systems" },
   { prompt: true, text: "cat status.txt" },
-  { prompt: false, text: "CMO at TMSA | looking for Winter 2027 internships" },
+  { prompt: false, text: "CMO @ TMSA. Open to Winter 2027 internships." },
 ];
 
 function useTyped(total: number) {
@@ -151,7 +153,7 @@ export default function SoftwareTemplate() {
         <span className="ml-3 hidden sm:inline">khushi_patel ~/portfolio</span>
       </div>
 
-      <header className="relative h-[500px] md:h-[580px] border-b border-ed-line overflow-hidden">
+      <header className="relative h-[560px] md:h-[640px] border-b border-ed-line overflow-hidden">
         <div className="absolute inset-0 opacity-90">
           <CodeRain />
         </div>
@@ -164,9 +166,9 @@ export default function SoftwareTemplate() {
             Khushi Patel<span className="text-white">.</span>
           </h1>
           <p className="text-lg md:text-2xl text-ed-text mb-5 max-w-3xl leading-snug [text-shadow:0_0_16px_#0a0a14,0_0_5px_#0a0a14]" style={{ fontFamily: "var(--font-body)" }}>
-            I build full-stack apps, <span className="text-[#3df5c8]">ML pipelines</span> and multi-agent systems.
+            I like to solve the problem <span className="text-[#3df5c8]">inside the problem</span>.
           </p>
-          <div className="text-sm md:text-base space-y-1 min-h-[7.5rem] [text-shadow:0_0_12px_#0a0a14]">
+          <div className="text-sm md:text-base space-y-1 min-h-[10.5rem] [text-shadow:0_0_12px_#0a0a14]">
             {heroLines.map((l, i) => {
               const take = Math.max(0, Math.min(l.text.length, left));
               left -= l.text.length;
