@@ -8,6 +8,14 @@
   --color-rule: #e4e0d8;
   --color-maroon: #52003a;
   --color-mark: #f0d08c;
+  --color-cream: #f6efe4;
+  --color-coral: #ff6b4a;
+  --color-ink2: #16110f;
+  --color-ed-bg: #15171c;
+  --color-ed-panel: #1b1e25;
+  --color-ed-line: #2a2e38;
+  --color-ed-text: #c5cad4;
+  --color-ed-dim: #6b7280;
   --font-display: "Fraunces Variable", Georgia, serif;
   --font-body: "Krub", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -69,4 +77,55 @@ body {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* code blocks with line numbers */
+.code {
+  counter-reset: line;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.code li {
+  counter-increment: line;
+  display: flex;
+  gap: 1.25rem;
+  white-space: pre-wrap;
+  min-height: 1.7em;
+}
+.code li::before {
+  content: counter(line);
+  width: 1.75rem;
+  flex-shrink: 0;
+  text-align: right;
+  color: #4b5263;
+  user-select: none;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee.rev {
+  animation-direction: reverse;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin 22s linear infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+.caret {
+  animation: blink 1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .spin-slow, .caret { animation: none; }
 }
