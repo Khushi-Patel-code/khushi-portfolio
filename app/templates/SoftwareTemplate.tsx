@@ -427,7 +427,7 @@ export default function SoftwareTemplate() {
           </Panel>
 
           <footer className="text-xs text-ed-dim pb-6">
-            © {new Date().getFullYear()} Khushi Patel. Set in JetBrains Mono.
+            © {new Date().getFullYear()} Khushi Patel.
           </footer>
         </main>
       </div>
