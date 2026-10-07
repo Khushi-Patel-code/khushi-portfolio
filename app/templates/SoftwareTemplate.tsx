@@ -151,7 +151,7 @@ export default function SoftwareTemplate() {
         <span className="ml-3 hidden sm:inline">khushi_patel ~/portfolio</span>
       </div>
 
-      <header className="relative h-[460px] md:h-[520px] border-b border-ed-line overflow-hidden">
+      <header className="relative h-[500px] md:h-[580px] border-b border-ed-line overflow-hidden">
         <div className="absolute inset-0 opacity-90">
           <CodeRain />
         </div>
@@ -163,7 +163,10 @@ export default function SoftwareTemplate() {
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.05] bg-gradient-to-r from-[#3df5c8] via-[#8b9bff] to-[#ff5c8a] bg-clip-text text-transparent w-fit">
             Khushi Patel<span className="text-white">.</span>
           </h1>
-          <div className="text-sm md:text-base space-y-1 min-h-[7.5rem]">
+          <p className="text-lg md:text-2xl text-ed-text mb-5 max-w-3xl leading-snug [text-shadow:0_0_16px_#0a0a14,0_0_5px_#0a0a14]" style={{ fontFamily: "var(--font-body)" }}>
+            I like the bugs that only show up once <span className="text-[#3df5c8]">real people</span> use the thing.
+          </p>
+          <div className="text-sm md:text-base space-y-1 min-h-[7.5rem] [text-shadow:0_0_12px_#0a0a14]">
             {heroLines.map((l, i) => {
               const take = Math.max(0, Math.min(l.text.length, left));
               left -= l.text.length;

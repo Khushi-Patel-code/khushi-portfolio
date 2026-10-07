@@ -112,51 +112,59 @@ function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 // what each section is built from, shown in the Figma-style panel as you scroll
-const specs: Record<string, { name: string; type: [string, string][]; colours: [string, string][]; note: string }> = {
+const specs: Record<string, { name: string; type: [string, string][]; colours: [string, string][]; note: string; flow: [string, string][] }> = {
   hero: {
     name: "Hero",
+    flow: [["Mouse move", "Smart animate, canvas follows the cursor"], ["On load", "Name types in, surname outlines"], ["Click toggle", "Open design details"]],
     type: [["Fraunces Italic", "name, 15vw"], ["Fraunces", "tagline, 30px"], ["Krub", "labels, caps"]],
     colours: [["Maroon", "#52003a"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"], ["Highlight", "#f0d08c"]],
     note: "Outlined surname is a 2px text stroke. The board on the right is drawn live on a canvas.",
   },
   ticker: {
     name: "Ticker",
+    flow: [["While loading", "Marquee, linear, 28s, loops"], ["Row 2", "Same loop, reversed"]],
     type: [["Fraunces Italic", "48px"]],
     colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"], ["Cream", "#f6efe4"]],
     note: "Two marquees tilted 1 degree each way, running opposite directions.",
   },
   work: {
     name: "Selected work",
+    flow: [["While scrolling", "Pinned. Page scroll moves the row sideways"], ["Hover card", "Video plays, tabs switch clips"]],
     type: [["Fraunces", "project titles"], ["Krub", "body, 18px"]],
     colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Coral", "#ff6b4a"]],
     note: "Pinned horizontal scroll. One project per screen, driven by scroll position.",
   },
   experience: {
     name: "Experience",
+    flow: [["Click row", "Open, grid rows 0fr to 1fr, 500ms"], ["Click again", "Close"], ["Hover title", "Italic, maroon"]],
     type: [["Fraunces", "role, 48px"], ["Krub", "dates, 14px at 60% ink"]],
     colours: [["Ink", "#16110f"], ["Maroon", "#52003a"], ["Coral", "#ff6b4a"]],
     note: "Accordion rows. The open row animates its height with a grid track, not a fixed pixel value.",
   },
   cases: {
     name: "Case studies",
+    flow: [["Click card", "Navigate to the write-up"], ["Hover", "Card lifts, arrow slides"]],
     type: [["Fraunces", "titles"], ["Krub", "body"]],
     colours: [["Ink", "#16110f"], ["Cream", "#f6efe4"], ["Maroon", "#52003a"]],
     note: "Every card uses one 16:9 frame, so a video and a text-only study sit side by side evenly.",
   },
   more: {
     name: "More on GitHub",
+    flow: [["Click title", "Open the repo on GitHub"]],
     type: [["Fraunces", "heading"], ["Krub", "body"]],
     colours: [["Cream", "#f6efe4"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
     note: "Smaller projects as a short list, so the big four keep the attention.",
   },
   skills: {
     name: "Skills",
+    flow: [["On scroll", "Groups fade up, 60ms apart"]],
     type: [["Fraunces", "heading"], ["Krub", "lists"]],
     colours: [["Highlight", "#f0d08c"], ["Maroon", "#52003a"], ["Ink", "#16110f"]],
     note: "Plain grouped lists. No bars or percentages, because those are made up.",
   },
   contact: {
     name: "Contact",
+    flow: [["Hover email", "Button follows the cursor, magnetic"], ["Click", "Opens your mail app"]],
     type: [["Fraunces Italic", "22vw"]],
     colours: [["Coral", "#ff6b4a"], ["Ink", "#16110f"]],
     note: "One action: email.",
@@ -220,6 +228,7 @@ function SpecFrame({ id, audit, current, onDims }: { id: string; audit: boolean;
 
 // the right-hand panel from Figma, rewritten for whichever section is in the middle of the screen
 function Inspector({ open, current, dims }: { open: boolean; current: string; dims: Record<string, string> }) {
+  const [tab, setTab] = useState<"design" | "prototype">("design");
   const sp = specs[current] ?? specs.hero;
   return (
     <AnimatePresence>
@@ -232,18 +241,30 @@ function Inspector({ open, current, dims }: { open: boolean; current: string; di
           className="fixed right-4 bottom-4 z-[90] w-[16.5rem] rounded-lg bg-[#2c2c2c] text-white shadow-2xl border border-white/10 font-mono text-[12px] overflow-hidden"
         >
           <div className="flex gap-4 px-4 pt-3 pb-2 border-b border-white/10 text-white/50">
-            <span className="text-white border-b-2 pb-1" style={{ borderColor: figmaBlue }}>Design</span>
-            <span>Prototype</span>
+            {(["design", "prototype"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                aria-pressed={tab === t}
+                className={`capitalize pb-1 border-b-2 transition-colors ${tab === t ? "text-white" : "text-white/50 border-transparent hover:text-white/80"}`}
+                style={tab === t ? { borderColor: figmaBlue } : undefined}
+              >
+                {t}
+              </button>
+            ))}
           </div>
           <AnimatePresence mode="wait">
             <motion.div
-              key={current}
+              key={current + tab}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22 }}
               className="p-4 space-y-4"
             >
+              {tab === "design" ? (
+                <>
               <div>
                 <p className="text-white text-[13px]">{sp.name}</p>
                 <p className="text-white/50">Frame {dims[current] ?? ""}</p>
@@ -269,6 +290,24 @@ function Inspector({ open, current, dims }: { open: boolean; current: string; di
                   ))}
                 </ul>
               </div>
+                </>
+              ) : (
+                <>
+              <div>
+                <p className="text-white text-[13px]">{sp.name}</p>
+                <p className="text-white/50">Interactions</p>
+              </div>
+              <ul className="space-y-2.5">
+                {sp.flow.map(([trig, act]) => (
+                  <li key={trig} className="rounded bg-white/5 px-2.5 py-2">
+                    <span style={{ color: figmaBlue }}>{trig}</span>
+                    <span className="text-white/40"> → </span>
+                    <span>{act}</span>
+                  </li>
+                ))}
+              </ul>
+                </>
+              )}
               <p className="text-white/60 leading-snug font-sans text-[12.5px]">{sp.note}</p>
             </motion.div>
           </AnimatePresence>
@@ -671,21 +710,6 @@ export default function UxTemplate() {
         <Marquee rev className="bg-ink2 text-cream rotate-1 scale-105 -mt-4" />
       </div>
 
-      <Work items={items} audit={audit} current={current} onDims={onDims} />
-
-      <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
-        <SpecFrame id="experience" audit={audit} current={current} onDims={onDims} />
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
-            Where I&apos;ve <em className="text-maroon">worked</em>
-          </h2>
-          {roles.map((r, i) => (
-            <ExperienceRow key={r.org + r.role} r={r} open={openRow === i} onToggle={() => setOpenRow(openRow === i ? -1 : i)} />
-          ))}
-          <div className="border-t border-ink2/20" />
-        </div>
-      </section>
-
       <section id="case-studies" className="relative px-6 md:px-14 py-24 md:py-32">
         <SpecFrame id="cases" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-6xl mx-auto">
@@ -723,6 +747,9 @@ export default function UxTemplate() {
         </div>
       </section>
 
+      <Work items={items} audit={audit} current={current} onDims={onDims} />
+
+
       <section className="relative px-6 md:px-14 py-24 bg-cream">
         <SpecFrame id="more" audit={audit} current={current} onDims={onDims} />
         <div className="max-w-5xl mx-auto">
@@ -753,6 +780,19 @@ export default function UxTemplate() {
             </a>
             .
           </p>
+        </div>
+      </section>
+
+      <section id="experience" className="relative px-6 md:px-14 py-24 md:py-32">
+        <SpecFrame id="experience" audit={audit} current={current} onDims={onDims} />
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-display text-5xl md:text-8xl tracking-tight mb-14">
+            Where I&apos;ve <em className="text-maroon">worked</em>
+          </h2>
+          {roles.map((r, i) => (
+            <ExperienceRow key={r.org + r.role} r={r} open={openRow === i} onToggle={() => setOpenRow(openRow === i ? -1 : i)} />
+          ))}
+          <div className="border-t border-ink2/20" />
         </div>
       </section>
 
@@ -800,14 +840,26 @@ export default function UxTemplate() {
               </a>
             </Magnetic>
           </div>
-          <ul className="mt-12 grid sm:grid-cols-2 gap-x-10 gap-y-2 max-w-xl">
+          <ul className="mt-12 flex flex-wrap gap-4">
             {links
               .filter((l) => l.label !== "Email")
               .map((l) => (
                 <li key={l.label}>
-                  <span className="text-ink2/60 mr-3">{l.label}</span>
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" className="link break-all">
-                    {l.value}
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={l.label}
+                    className="group flex items-center gap-3 pl-3 pr-5 py-2.5 rounded-full border-2 border-ink2 hover:bg-ink2 hover:text-cream transition-colors"
+                  >
+                    <span className="w-9 h-9 rounded-full bg-ink2 text-cream group-hover:bg-coral group-hover:text-ink2 grid place-items-center transition-colors">
+                      {l.label === "LinkedIn" ? (
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z" /></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z" /></svg>
+                      )}
+                    </span>
+                    <span className="text-base">{l.label}</span>
                   </a>
                 </li>
               ))}
