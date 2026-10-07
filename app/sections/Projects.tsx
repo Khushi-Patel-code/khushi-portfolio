@@ -1,233 +1,139 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { useView } from "../components/ViewContext";
 
-const projects = [
-  {
+type Project = {
+  id: string;
+  title: string;
+  line: string;
+  stack: string;
+  github: string;
+  demo?: string;
+  image?: string;
+  alt?: string;
+};
+
+const all: Record<string, Project> = {
+  farsight: {
+    id: "farsight",
     title: "Farsight",
-    subtitle: "Multi-Agent Railway Crowd Management",
-    description: "A multi-agent platform that predicts where crowds will build up in railway stations and shows operators what to do about it. Top 100 of 11,000+ applicants at FAR AWAY 2026, invited to the in-person round in Delhi.",
-    highlights: ["Live simulation map", "Prediction timeline", "Agent fleet view for operators", "Alerts and recommendations"],
-    tags: ["react", "typescript", "tailwindcss"],
-    link: "https://github.com/Khushi-Patel-code/Farsight",
+    line: "A multi-agent system that predicts where crowds will build up in railway stations and tells operators what to do about it. Top 100 of 11,000+ applicants at FAR AWAY 2026, and invited to the in-person round in Delhi.",
+    stack: "React, TypeScript, Tailwind CSS, multi-agent systems",
+    github: "https://github.com/Khushi-Patel-code/Farsight",
     demo: "https://farsight-fawn.vercel.app",
     image: "/projects/farsight-dashboard.jpg",
+    alt: "Farsight operator dashboard with a live simulation map, risk alerts and recommendations",
   },
-  {
-    title: "E-Commerce Management System",
-    subtitle: "Full-Stack Inventory Orchestration",
-    description: "A robust full-stack system for inventory and order orchestration with role-based authentication, inventory management, order processing, analytics, and secure admin controls.",
-    highlights: ["JWT Authentication", "Product & Inventory CRUD", "Role-based Access Control", "Dynamic Data Visualization", "Order Processing & Tracking", "Sales Analytics & Reporting" ],
-    tags: ["nodedotjs", "mysql","jsonwebtokens", "express", "chartdotjs"],
-    link: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
-    image: "/projects/ecom-dashboard.jpg",
-  },
-  {
+  neuro: {
+    id: "neuro",
     title: "Neuro-Pilot",
-    subtitle: "AI-Powered Executive Function Support",
-    description: "AI-powered support system for neurodivergent students, developed for the Technation AI Hackathon. Replaces rigid timers with gentle momentum, breaking tasks into sensory-friendly micro-steps.",
-    highlights: ["Micro-step task breakdown", "Sensory-friendly UX", "Hackathon Project", "Momentum-based workflow"],
-    tags: ["python", "openai", "accessibility", "uxdesign"],
-    link: "https://github.com/Khushi-Patel-code/Neuro-Pilot"
+    line: "AI support for neurodivergent students. It swaps rigid timers for gentle momentum and breaks tasks into small, sensory-friendly steps. Built for the TechNation AI hackathon.",
+    stack: "Python, OpenAI, accessibility-first UX",
+    github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
   },
-  {
-    title: "Battery SOH Predictor",
-    subtitle: "IoT & Machine Learning Analysis",
-    description: "A full-stack AI solution predicting battery State of Health using Linear Regression. Features an integrated OpenAI chatbot to translate complex sensor data into actionable health insights.",
-    highlights: ["Linear Regression Model", "OpenAI Chatbot Integration", "Real-time Sensor Analysis", "AWS Elastic Beanstalk"],
-    tags: ["react", "flask", "amazonwebservices", "scikitlearn"],
-    link: "https://github.com/Khushi-Patel-code/BatterySOH-AI"
+  ecom: {
+    id: "ecom",
+    title: "E-Commerce Inventory & Order System",
+    line: "A full-stack system for inventory and orders, with role-based logins, order tracking, and sales analytics for admins.",
+    stack: "Node.js, Express, MySQL, JWT, Chart.js",
+    github: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
+    image: "/projects/ecom-dashboard.jpg",
+    alt: "E-commerce admin dashboard showing revenue, products, customers and sales charts",
   },
-  {
-    title: "TSWF Automation Framework",
-    subtitle: "UNIX System Automation",
-    description: "A modular Bash-based system for scheduling recurring tasks and multi-step workflows. Implements core UNIX principles like process control, error handling, and file-based state tracking.",
-    highlights: ["Bash-based scheduling", "UNIX Process Control", "File-based state tracking", "Cron Integration"],
-    tags: ["gnubash", "linux", "automation", "cron"],
-    link: "https://github.com/Khushi-Patel-code/TASK-SCHEDULER"
-  },
-  {
+  coach: {
+    id: "coach",
     title: "Multi-Agent AI Learning Coach",
-    subtitle: "Agentic AI Orchestration",
-    description: "An orchestration of AI agents designed to generate personalized study plans and research summaries. Built as a Kaggle capstone focusing on session memory and autonomous tool usage.",
-    highlights: ["Agent Orchestration", "Session Memory Tracking", "Kaggle Capstone", "Autonomous Tool Usage"],
-    tags: ["python", "kaggle", "openai", "langchain"],
-    link: "https://github.com/Khushi-Patel-code/AI-learning-coach-kaggle-capstone"
+    line: "A group of AI agents that put together personalized study plans and research summaries. My Kaggle capstone, focused on session memory and how agents use tools.",
+    stack: "Python, OpenAI, LangChain",
+    github: "https://github.com/Khushi-Patel-code/AI-learning-coach-kaggle-capstone",
   },
-  {
-    title: "ChronoSlate Web Calendar",
-    subtitle: "Interactive Scheduling System",
-    description: "An interactive scheduling interface focusing on persistence and user-centric event management. Designed with a high-contrast UI and localized storage for seamless performance.",
-    highlights: ["Local Storage Persistence", "High-contrast UI Design", "User-centric event management", "Dynamic calendar generation"],
-    tags: ["javascript", "html5", "css3", "storage"],
-    link: "https://github.com/Khushi-Patel-code/Chronoslate_Web_calendar"
-  }
-];
-
-// Refined Staggered Title: It now inherits "hovered" state from the parent "group"
-const StaggeredTitle = ({ title }: { title: string }) => {
-  const letters = title.split("");
-  
-  return (
-    <h3 className="text-2xl font-bold text-white uppercase tracking-tight flex flex-wrap pointer-events-none">
-      {letters.map((char, i) => (
-        <motion.span
-          key={i}
-          variants={{
-            initial: { color: "#ffffff" },
-            hovered: { color: "#818cf8" }, // Indigo wave
-          }}
-          transition={{
-            duration: 0.3,
-            delay: i * 0.02,
-            ease: "easeInOut"
-          }}
-          style={{ whiteSpace: char === " " ? "pre" : "normal" }}
-        >
-          {char}
-        </motion.span>
-      ))}
-    </h3>
-  );
 };
 
-const Projects = () => {
+const order = {
+  ux: ["farsight", "neuro", "ecom", "coach"],
+  software: ["farsight", "ecom", "coach", "neuro"],
+};
+
+export default function Projects() {
+  const { view } = useView();
+  const projects = order[view].map((k) => all[k]);
+
   return (
-    <section id="projects" className="relative py-32 px-6 md:px-24 bg-black overflow-hidden select-none">
-      <div className="max-w-7xl mx-auto relative z-10">
-        
-        <div className="mb-24">
-          <span className="text-indigo-500 font-mono text-xs tracking-[0.3em] uppercase block mb-4">
-            Featured Projects
+    <section id="work" className="max-w-5xl mx-auto px-6 md:px-10 py-20 border-t border-rule">
+      <h2 className="font-display text-4xl md:text-6xl tracking-tight mb-14">
+        Things I&apos;ve <em className="text-maroon">made</em>
+      </h2>
+
+      {view === "ux" && (
+        <Link
+          href="/case-studies/hirezapp"
+          className="group block bg-paper-deep rounded-sm p-8 md:p-12 mb-20 hover:bg-[#e6dcca] transition-colors"
+        >
+          <p className="font-display italic text-maroon text-lg mb-3">Case study</p>
+          <h3 className="font-display text-3xl md:text-5xl leading-tight tracking-tight max-w-3xl">
+            I audited 15+ pages against 20+ competitors, then fixed what confused people.
+          </h3>
+          <p className="mt-5 text-muted max-w-xl">
+            My work at HireZapp, an AI recruiting startup. It ended with a redesign of the candidate
+            communications hub that shipped to production.
+          </p>
+          <span className="mt-6 inline-block link text-ink group-hover:text-maroon">
+            Read the case study
           </span>
-          <h2 className="text-5xl md:text-8xl font-bold text-white tracking-tighter">
-            PROJECTS
-          </h2>
-        </div>
+        </Link>
+      )}
 
-        <div className="flex flex-col gap-24">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial="initial"
-              whileInView={{ opacity: 1, y: 0 }}
-              whileHover="hovered" // This triggers the wave for the specific card
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              // Added cursor-default so only the circle feels clickable
-              className="flex flex-col lg:flex-row gap-10 group cursor-default"
-            >
-              {/* IMAGE / PREVIEW BOX */}
-              <div className="lg:w-3/5 aspect-video bg-zinc-900/50 rounded-3xl border border-white/5 overflow-hidden relative">
-                <div
-                  className={`absolute left-8 z-20 max-w-xs pointer-events-none ${
-                    "image" in project && project.image ? "bottom-6" : "top-8"
-                  }`}
-                >
-                  <p
-                    className={`font-medium leading-snug ${
-                      "image" in project && project.image
-                        ? "text-sm text-zinc-100 bg-black/75 backdrop-blur rounded-full px-4 py-2 inline-block"
-                        : "text-xl text-zinc-300"
-                    }`}
-                  >
-                    {project.subtitle}
-                  </p>
-                </div>
-                
-                {/* GITHUB LINK: The ONLY clickable part */}
-                <div className="absolute top-8 right-8 z-30">
-                    <a 
-                      href={project.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="w-12 h-12 rounded-full bg-black border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500 shadow-2xl group/btn cursor-pointer"
-                    >
-                      <svg 
-                        className="absolute group-hover/btn:opacity-0 group-hover/btn:scale-50 transition-all duration-500" 
-                        width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-                      >
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                      </svg>
-                      <svg 
-                        className="opacity-0 scale-50 group-hover/btn:opacity-100 group-hover/btn:scale-100 transition-all duration-500" 
-                        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                      >
-                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
-                      </svg>
-                    </a>
-                </div>
+      <ol className="space-y-24">
+        {projects.map((p, i) => (
+          <li key={p.id} className="grid md:grid-cols-12 gap-x-10 gap-y-6">
+            <div className="md:col-span-1 font-display italic text-3xl text-rule">0{i + 1}</div>
 
-                {"image" in project && project.image ? (
-                  <>
-                    <img
-                      src={project.image}
-                      alt={`${project.title} screenshot`}
-                      className="absolute inset-0 w-full h-full object-cover object-top pt-0"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 to-transparent pointer-events-none"></div>
-                  </>
-                ) : (
-                  <>
-                    <div className="absolute -bottom-1/4 -left-1/4 w-[150%] h-[150%] bg-indigo-500/10 rounded-full blur-[120px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
-                    <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-mono text-xs uppercase tracking-widest pt-20 text-center px-4 pointer-events-none">
-                      {project.title} Interface Preview
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* TEXT CONTENT */}
-              <div className="lg:w-2/5 flex flex-col justify-center space-y-8 pointer-events-none">
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="h-[1px] w-6 bg-indigo-500"></span>
-                    <StaggeredTitle title={project.title} />
-                  </div>
-                  <p className="text-zinc-400 font-light leading-relaxed">
-                    {project.description}
-                  </p>
-                </div>
-
-                {"demo" in project && project.demo && (
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pointer-events-auto self-start text-sm text-indigo-400 hover:text-indigo-300"
-                  >
-                    Open the live demo →
+            <div className={p.image ? "md:col-span-5" : "md:col-span-11 md:max-w-2xl"}>
+              <h3 className="font-display text-3xl md:text-4xl leading-tight tracking-tight mb-4">
+                {p.title}
+              </h3>
+              <p className="text-ink/85 mb-5">{p.line}</p>
+              <p className="text-sm text-muted mb-5">{p.stack}</p>
+              <p className="flex gap-6 text-[15px]">
+                {p.demo && (
+                  <a href={p.demo} target="_blank" rel="noopener noreferrer" className="link">
+                    Live demo
                   </a>
                 )}
+                <a href={p.github} target="_blank" rel="noopener noreferrer" className="link">
+                  Code on GitHub
+                </a>
+              </p>
+            </div>
 
-                <ul className="space-y-2">
-                  {project.highlights.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-zinc-300">
-                      <span className="text-indigo-400 mt-1">✦</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex gap-4 pt-4 transition-all duration-500 pointer-events-auto">
-                   {project.tags.map(tag => (
-                     <div key={tag} className="w-14 h-14 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center p-3 hover:border-white/30 transition-all">
-                       <img 
-                        src={`https://cdn.simpleicons.org/${tag}`} 
-                        alt={tag} 
-                        className="w-full h-full object-contain"
-                       />
-                     </div>
-                   ))}
-                </div>
+            {p.image && (
+              <div className="md:col-span-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.image}
+                  alt={p.alt}
+                  loading="lazy"
+                  className="w-full rounded-sm border border-rule shadow-[6px_6px_0_var(--color-rule)]"
+                />
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+            )}
+          </li>
+        ))}
+      </ol>
+
+      <p className="mt-24 text-lg">
+        There&apos;s more, mostly class labs and smaller experiments, on{" "}
+        <a
+          href="https://github.com/Khushi-Patel-code"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="link"
+        >
+          my GitHub
+        </a>
+        .
+      </p>
     </section>
   );
-};
-
-export default Projects;
+}

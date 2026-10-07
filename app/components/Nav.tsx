@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useView, View } from "./ViewContext";
 
 const links = [
-  { href: "/#about", label: "About" },
+  { href: "/#work", label: "Work" },
   { href: "/#experience", label: "Experience" },
-  { href: "/#projects", label: "Projects" },
   { href: "/#contact", label: "Contact" },
 ];
 
 const views: { id: View; label: string }[] = [
-  { id: "ux", label: "UX & Product" },
+  { id: "ux", label: "UX & product" },
   { id: "software", label: "Software" },
 ];
 
@@ -19,49 +18,37 @@ export default function Nav() {
   const { view, setView } = useView();
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-[#0a0a0c]/80 backdrop-blur border-b border-white/5">
-      <div className="flex items-center justify-between gap-4 px-6 md:px-16 py-3">
-        <Link
-          href="/"
-          className="text-white font-bold tracking-wide text-lg"
-          style={{ fontFamily: "var(--font-rajdhani), sans-serif" }}
-        >
-          KP
+    <header className="sticky top-0 z-50 bg-paper/90 backdrop-blur border-b border-rule">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-3 flex items-center justify-between gap-4">
+        <Link href="/" className="font-display text-xl font-semibold tracking-tight">
+          Khushi Patel
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-7 text-[15px] text-muted">
           {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="text-sm text-slate-400 hover:text-white transition-colors"
-            >
+            <Link key={l.href} href={l.href} className="hover:text-ink transition-colors">
               {l.label}
             </Link>
           ))}
-        </div>
+        </nav>
 
-        <div
-          role="group"
-          aria-label="Portfolio view"
-          className="flex rounded-full border border-white/10 p-0.5 text-xs"
-          style={{ fontFamily: "var(--font-dm-mono), monospace" }}
-        >
-          {views.map((v) => (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => setView(v.id)}
-              aria-pressed={view === v.id}
-              className={`px-3 py-1.5 rounded-full transition-colors ${
-                view === v.id ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white"
-              }`}
-            >
-              {v.label}
-            </button>
+        <div className="flex items-center gap-2 text-sm" role="group" aria-label="Which side of my work to show first">
+          <span className="text-muted hidden sm:inline">Show me</span>
+          {views.map((v, i) => (
+            <span key={v.id} className="flex items-center gap-2">
+              {i > 0 && <span className="text-rule">/</span>}
+              <button
+                type="button"
+                onClick={() => setView(v.id)}
+                aria-pressed={view === v.id}
+                className={view === v.id ? "text-ink font-medium mark" : "text-muted hover:text-ink"}
+              >
+                {v.label}
+              </button>
+            </span>
           ))}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
