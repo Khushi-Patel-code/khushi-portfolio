@@ -2,8 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ViewProvider, useView } from "./components/ViewContext";
-import SoftwareTemplate from "./templates/SoftwareTemplate";
-import UxTemplate from "./templates/UxTemplate";
+import MinimalTemplate from "./templates/MinimalTemplate";
 
 function Site() {
   const { view } = useView();
@@ -16,7 +15,7 @@ function Site() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {view === "software" ? <SoftwareTemplate /> : <UxTemplate />}
+        <MinimalTemplate />
       </motion.div>
     </AnimatePresence>
   );

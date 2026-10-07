@@ -1,17 +1,13 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-paper: #f5efe6;
-  --color-paper-deep: #ece4d6;
-  --color-ink: #1d1a17;
-  --color-muted: #6a6055;
-  --color-rule: #d8ccba;
+  --color-paper: #fcfbf8;
+  --color-paper-deep: #f1eee8;
+  --color-ink: #1a1a1a;
+  --color-muted: #6b6a66;
+  --color-rule: #e4e0d8;
   --color-maroon: #52003a;
   --color-mark: #f0d08c;
-  --color-sw-bg: #eff0ec;
-  --color-sw-ink: #111315;
-  --color-sw-line: #c4c8bf;
-  --color-sw-dim: #596058;
   --font-display: "Fraunces Variable", Georgia, serif;
   --font-body: "Krub", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
