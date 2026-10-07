@@ -1,42 +1,25 @@
 import type { Metadata } from "next";
-import { Rajdhani, DM_Sans, DM_Mono } from "next/font/google";
+import "@fontsource-variable/fraunces/opsz.css";
+import "@fontsource-variable/fraunces/opsz-italic.css";
+import "@fontsource/krub/400.css";
+import "@fontsource/krub/500.css";
+import "@fontsource/krub/600.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/700.css";
 import "./globals.css";
 
-const rajdhani = Rajdhani({
-  subsets: ["latin"],
-  variable: "--font-rajdhani",
-  weight: ["600", "700"],
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
-  weight: ["300", "400", "500"],
-  display: "swap",
-});
-
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  variable: "--font-dm-mono",
-  weight: ["300", "400"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Khushi Patel — Software Engineer & Designer",
+  title: "Khushi Patel | Software Engineering, UX & Product",
   description:
-    "Portfolio of Khushi Patel — Software Engineering student at Ontario Tech University, specializing in UX/UI design and frontend development.",
-  keywords: ["Software Engineer", "UX Design", "Frontend Developer", "Ontario Tech", "Portfolio"],
+    "Khushi Patel, fourth-year Software Engineering student at Ontario Tech University, working across software, UX, and product.",
+  keywords: ["Software Engineer", "UX Design", "Product", "Frontend Developer", "Ontario Tech", "Portfolio"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${rajdhani.variable} ${dmSans.variable} ${dmMono.variable}`}
-    >
-      <body style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>{children}</body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }

@@ -9,12 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "d3-geo": "^3.1.1",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/krub": "^5.3.0",
     "framer-motion": "^12.34.3",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-simple-maps": "^3.0.0"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
