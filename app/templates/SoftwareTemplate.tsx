@@ -25,9 +25,9 @@ const tree = [
 
 const heroLines = [
   { prompt: true, text: "whoami" },
-  { prompt: false, text: "khushi patel, software engineer" },
+  { prompt: false, text: "fourth-year software engineering student, Ontario Tech" },
   { prompt: true, text: "cat status.txt" },
-  { prompt: false, text: "CMO @ TMSA | looking for Winter 2027 internships" },
+  { prompt: false, text: "CMO at TMSA | looking for Winter 2027 internships" },
 ];
 
 function useTyped(total: number) {
@@ -84,8 +84,8 @@ export default function SoftwareTemplate() {
     if (cmd === "help") {
       add("commands: about, projects, experience, stack, contact, farsight, github, linkedin, ux, clear");
     } else if (cmd === "about") {
-      add("Software engineering student at Ontario Tech. I build full-stack and multi-agent systems.");
-      add("CMO of the Tech Management Student Association. Looking for Winter 2027 internships.");
+      add("Fourth-year software engineering student at Ontario Tech. I build full-stack apps, ML pipelines and multi-agent systems.");
+      add("CMO at the Tech Management Student Association. Looking for Winter 2027 internships.");
     } else if (cmd === "projects") {
       softwareOrder.forEach((k) => add(`${projects[k].title}: ${projects[k].stack}`));
       add("type farsight for the live demo");
@@ -164,7 +164,7 @@ export default function SoftwareTemplate() {
             Khushi Patel<span className="text-white">.</span>
           </h1>
           <p className="text-lg md:text-2xl text-ed-text mb-5 max-w-3xl leading-snug [text-shadow:0_0_16px_#0a0a14,0_0_5px_#0a0a14]" style={{ fontFamily: "var(--font-body)" }}>
-            I like the bugs that only show up once <span className="text-[#3df5c8]">real people</span> use the thing.
+            I build full-stack apps, <span className="text-[#3df5c8]">ML pipelines</span> and multi-agent systems.
           </p>
           <div className="text-sm md:text-base space-y-1 min-h-[7.5rem] [text-shadow:0_0_12px_#0a0a14]">
             {heroLines.map((l, i) => {

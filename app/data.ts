@@ -72,6 +72,12 @@ export const moreWork = [
     stack: "Python, Streamlit, Gemma 3 27B",
     github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
   },
+  {
+    title: "Maze Solver",
+    line: "A Java program that finds the shortest path through a maze with breadth-first search. You enter the size and layout, 0 for open and 1 for wall, and it prints the route.",
+    stack: "Java, BFS, queues and graphs",
+    github: "https://github.com/Khushi-Patel-code/Maze_Solver",
+  },
 ];
 
 export const githubUrl = "https://github.com/Khushi-Patel-code";
