@@ -6,6 +6,8 @@ export type Project = {
   github: string;
   demo?: string;
   image?: string;
+  video?: string;
+  poster?: string;
   alt?: string;
 };
 
@@ -18,6 +20,8 @@ export const projects: Record<string, Project> = {
     github: "https://github.com/Khushi-Patel-code/Farsight",
     demo: "https://farsight-fawn.vercel.app",
     image: "/projects/farsight-dashboard.jpg",
+    video: "/videos/farsight.mp4",
+    poster: "/videos/farsight.jpg",
     alt: "Farsight operator dashboard with a live simulation map, risk alerts and recommendations",
   },
   neuro: {
@@ -26,6 +30,8 @@ export const projects: Record<string, Project> = {
     line: "AI support for neurodivergent students. It swaps rigid timers for gentle momentum and breaks tasks into small, sensory-friendly steps. Built for the TechNation AI hackathon.",
     stack: "Python, OpenAI, accessibility-first UX",
     github: "https://github.com/Khushi-Patel-code/Neuro-Pilot",
+    video: "/videos/neuropilot.mp4",
+    poster: "/videos/neuropilot.jpg",
   },
   ecom: {
     id: "ecom",
@@ -34,6 +40,8 @@ export const projects: Record<string, Project> = {
     stack: "Node.js, Express, MySQL, JWT, Chart.js",
     github: "https://github.com/Khushi-Patel-code/E-Commerce-Inventory-Order-Management-System-Website",
     image: "/projects/ecom-dashboard.jpg",
+    video: "/videos/ecom.mp4",
+    poster: "/videos/ecom.jpg",
     alt: "E-commerce admin dashboard showing revenue, products, customers and sales charts",
   },
   coach: {

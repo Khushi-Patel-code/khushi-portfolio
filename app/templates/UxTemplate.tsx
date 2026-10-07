@@ -1,5 +1,7 @@
 "use client";
 
+import DesignCanvas from "../components/DesignCanvas";
+import ProjectVideo from "../components/ProjectVideo";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -268,7 +270,19 @@ function WorkPanel({ p, i, desktop }: { p: Project; i: number; desktop: boolean 
         </div>
 
         <div className="md:col-span-7">
-          {p.image ? (
+          {p.video ? (
+            <motion.div
+              initial={{ rotate: -2.5, y: 30, opacity: 0 }}
+              whileInView={{ rotate: -2.5, y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              whileHover={{ rotate: 0, scale: 1.02 }}
+              transition={{ duration: 0.9, ease }}
+              data-hover
+              className="rounded-md border-2 border-cream/80 overflow-hidden shadow-[14px_14px_0_#ff6b4a]"
+            >
+              <ProjectVideo src={p.video} poster={p.poster ?? ""} label={`${p.title} demo video`} />
+            </motion.div>
+          ) : p.image ? (
             <motion.div
               initial={{ rotate: -2.5, y: 30, opacity: 0 }}
               whileInView={{ rotate: -2.5, y: 0, opacity: 1 }}
@@ -412,15 +426,18 @@ export default function UxTemplate() {
           my.set(((e.clientY - r.top) / r.height) * 2 - 1);
         }}
       >
+        <div className="absolute inset-y-0 right-0 left-0 md:left-[47%] pointer-events-none opacity-40 md:opacity-100">
+          <DesignCanvas />
+        </div>
         <Pin n={1} audit={audit} className="top-[6.25rem] left-6 md:left-[31rem]" note="Name first, big. Someone skimming from across a table knows who this is in a second." />
 
-        <div className="px-6 md:px-14 pt-24">
+        <div className="relative px-6 md:px-14 pt-24">
           <p className="text-sm tracking-[0.25em] uppercase text-cream/70">Software engineer, UX and product</p>
         </div>
 
         <div className="relative px-6 md:px-14">
           <motion.h1 style={{ x: tx }} className="font-display leading-[0.82] tracking-tight">
-            <span className="block italic" style={{ fontSize: "clamp(6rem, 25vw, 23rem)" }}>
+            <span className="block italic" style={{ fontSize: "clamp(5.5rem, 15vw, 15rem)" }}>
               {word.map((c, i) => (
                 <span key={i} className="inline-block overflow-hidden align-bottom pb-[0.08em]">
                   <motion.span
@@ -437,7 +454,7 @@ export default function UxTemplate() {
             <span
               className="block"
               style={{
-                fontSize: "clamp(6rem, 25vw, 23rem)",
+                fontSize: "clamp(5.5rem, 15vw, 15rem)",
                 WebkitTextStroke: "2px #f6efe4",
                 color: "transparent",
               }}
@@ -455,7 +472,7 @@ export default function UxTemplate() {
 
           <motion.div
             style={{ x: bx, y: by }}
-            className="hidden md:block absolute right-14 top-0 w-44 h-44"
+            className="hidden md:block absolute left-[30rem] bottom-2 w-36 h-36"
             aria-hidden="true"
           >
             <svg viewBox="0 0 200 200" className="w-full h-full spin-slow">
@@ -470,7 +487,7 @@ export default function UxTemplate() {
           </motion.div>
         </div>
 
-        <div className="px-6 md:px-14 pb-24 pt-8 flex flex-wrap items-end justify-between gap-6">
+        <div className="relative px-6 md:px-14 pb-32 pt-8 flex flex-wrap items-end justify-between gap-6">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

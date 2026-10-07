@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import CrowdCanvas from "../components/CrowdCanvas";
+import CodeRain from "../components/CodeRain";
+import ProjectVideo from "../components/ProjectVideo";
 import ViewPill from "../components/ViewPill";
 import { useView } from "../components/ViewContext";
 import { projects, softwareOrder, moreWork, githubUrl, roles, skills, links } from "../data";
@@ -152,7 +153,7 @@ export default function SoftwareTemplate() {
 
       <header className="relative h-[460px] md:h-[520px] border-b border-ed-line overflow-hidden">
         <div className="absolute inset-0 opacity-90">
-          <CrowdCanvas />
+          <CodeRain />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-ed-bg via-ed-bg/40 to-transparent" />
         <div className="relative h-full max-w-6xl mx-auto px-6 md:px-10 flex flex-col justify-end pb-10">
@@ -175,8 +176,7 @@ export default function SoftwareTemplate() {
             })}
           </div>
           <p className="mt-4 text-xs text-ed-dim max-w-xl">
-            The dots are a tiny crowd simulation, a nod to Farsight: people queue for platforms, platform 4 gets
-            crowded, and an agent suggests rerouting.
+            {"// the background is live code and data tokens. move your mouse over it."}
           </p>
         </div>
       </header>
@@ -304,14 +304,18 @@ export default function SoftwareTemplate() {
                       ))}
                     </p>
                   )}
-                  {p.image && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={p.image}
-                      alt={p.alt ?? p.title}
-                      loading="lazy"
-                      className="mt-5 w-full rounded border border-ed-line"
+                  {p.video ? (
+                    <ProjectVideo
+                      src={p.video}
+                      poster={p.poster ?? ""}
+                      label={`${p.title} demo video`}
+                      className="mt-5 rounded border border-ed-line"
                     />
+                  ) : (
+                    p.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.image} alt={p.alt ?? p.title} loading="lazy" className="mt-5 w-full rounded border border-ed-line" />
+                    )
                   )}
                 </Panel>
               );
