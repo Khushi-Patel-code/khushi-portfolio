@@ -684,7 +684,10 @@ export default function UxTemplate() {
             transition={{ duration: 1, delay: 1.1, ease }}
             className="font-display text-2xl md:text-4xl max-w-xl leading-snug"
           >
-            What if you&apos;re solving the <em className="text-mark">wrong</em> problem?
+            What if you&apos;re solving the{" "}
+            <span className="block whitespace-nowrap">
+              <em className="text-mark">wrong</em> problem?
+            </span>
           </motion.p>
           <motion.dl
             initial={{ opacity: 0 }}
