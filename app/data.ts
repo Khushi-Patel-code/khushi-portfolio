@@ -136,3 +136,6 @@ export const links = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/khushipatel-dev", value: "linkedin.com/in/khushipatel-dev" },
   { label: "GitHub", href: githubUrl, value: "github.com/Khushi-Patel-code" },
 ];
+
+// paste the live resume link (or a /resume.pdf in public/) here. While it is empty the resume sections stay hidden.
+export const resumeUrl = "";

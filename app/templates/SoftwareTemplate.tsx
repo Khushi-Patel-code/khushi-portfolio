@@ -5,7 +5,7 @@ import CodeRain from "../components/CodeRain";
 import ProjectVideo from "../components/ProjectVideo";
 import ViewPill from "../components/ViewPill";
 import { useView } from "../components/ViewContext";
-import { projects, softwareOrder, moreWork, githubUrl, roles, skills, links } from "../data";
+import { projects, softwareOrder, resumeUrl, moreWork, githubUrl, roles, skills, links } from "../data";
 
 // syntax colours
 const K = ({ children }: { children: React.ReactNode }) => <span className="text-[#d28bff]">{children}</span>;
@@ -20,6 +20,7 @@ const tree = [
   { id: "projects", file: "projects/" },
   { id: "experience", file: "experience.log" },
   { id: "stack", file: "stack.json" },
+  ...(resumeUrl ? [{ id: "resume", file: "resume.pdf" }] : []),
   { id: "contact", file: "contact.sh" },
 ];
 
@@ -82,7 +83,7 @@ export default function SoftwareTemplate() {
       return;
     }
     if (cmd === "help") {
-      add("commands: about, projects, experience, stack, contact, farsight, github, linkedin, ux, clear");
+      add(`commands: about, projects, experience, stack, ${resumeUrl ? "resume, " : ""}contact, farsight, github, linkedin, ux, clear`);
     } else if (cmd === "about") {
       add("Fourth-year software engineering student at Ontario Tech. I build full-stack apps, ML pipelines and multi-agent systems.");
       add("CMO at the Tech Management Student Association. Looking for Winter 2027 internships.");
@@ -93,6 +94,12 @@ export default function SoftwareTemplate() {
       roles.forEach((r) => add(`${r.dates}  ${r.role}, ${r.org}`));
     } else if (cmd === "stack") {
       skills.forEach((s) => add(`${s.label}: ${s.items}`));
+    } else if (cmd === "resume" && resumeUrl) {
+      add(
+        <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className={a}>
+          opening resume
+        </a>,
+      );
     } else if (cmd === "contact") {
       links.forEach((l) =>
         add(
@@ -379,6 +386,23 @@ export default function SoftwareTemplate() {
               <li>{"}"}</li>
             </ol>
           </Panel>
+
+          {resumeUrl && (
+            <Panel id="resume" file="resume.pdf">
+              <p className="mb-4" style={{ fontFamily: "var(--font-body)" }}>
+                My current resume: projects, the HireZapp work and the TMSA role.
+              </p>
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-2 border border-[#3df5c8]/60 text-[#3df5c8] px-4 py-2 rounded hover:bg-[#3df5c8] hover:text-ed-bg transition-colors"
+              >
+                <span aria-hidden="true">&darr;</span> download resume
+              </a>
+            </Panel>
+          )}
 
           <Panel id="contact" file="contact.sh">
             <p className="mb-4" style={{ fontFamily: "var(--font-body)" }}>

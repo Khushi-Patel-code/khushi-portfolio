@@ -16,7 +16,7 @@ import {
   useTransform,
 } from "framer-motion";
 import ViewPill from "../components/ViewPill";
-import { projects, uxOrder, moreWork, githubUrl, roles, skills, links, Project } from "../data";
+import { projects, uxOrder, moreWork, githubUrl, roles, skills, links, resumeUrl, Project } from "../data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -842,6 +842,17 @@ export default function UxTemplate() {
                 khuship2708@gmail.com
               </a>
             </Magnetic>
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="inline-flex items-center gap-2 ml-0 sm:ml-4 mt-4 sm:mt-0 px-8 py-4 rounded-full border-2 border-ink2 text-lg hover:bg-ink2 hover:text-cream transition-colors"
+              >
+                <span aria-hidden="true">&darr;</span> Download my resume
+              </a>
+            )}
           </div>
           <ul className="mt-12 flex flex-wrap gap-4">
             {links
